@@ -268,12 +268,12 @@ function onTouch(event)
         if isAudioPlaying then
             isAudioPlaying = false
             buttonPlay:removeSelf()  -- Remove o botão atual
-            buttonPlay = display.newImageRect(scene.view, "image/Page01/audio_desligado.png", 140, 140)
+            buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_desligado.png", 140, 140)
             audio.stop()
         else
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
-            buttonPlay = display.newImageRect(scene.view, "image/Page01/audio_ligado.png", 301, 167)
+            buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_ligado.png", 301, 167)
             sound = audio.loadSound("audio/Page01/chuva.mp3")
             audio.play(sound, {loops = -1})
         end
@@ -285,7 +285,7 @@ end
 
 -- fução proxima página
 local function proximaPagina()
-    composer.gotoScene("Pages.Page012", {effect = "slideLeft", time = 500})
+    composer.gotoScene("Pages.Page04", {effect = "slideLeft", time = 500})
 end
 
 -- Função para criar a cena
@@ -300,9 +300,9 @@ function scene:create(event)
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     if isAudioPlaying then
-        buttonPlay = display.newImageRect(sceneGroup, "image/Page01/audio_ligado.png", 301, 167)
+        buttonPlay = display.newImageRect(sceneGroup, "image/Fone/audio_ligado.png", 301, 167)
     else
-        buttonPlay = display.newImageRect(sceneGroup, "image/Page01/audio_desligado.png", 140, 140)
+        buttonPlay = display.newImageRect(sceneGroup, "image/Fone/audio_desligado.png", 140, 140)
     end
     buttonPlay.x = display.contentWidth - 150
     buttonPlay.y = 200
