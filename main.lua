@@ -3,5 +3,5 @@ local composer = require("composer")
 
 -- print("Boa noite, mundo!")
 
-composer.gotoScene("Pages.Page04")
+composer.gotoScene("Pages.Page05")
 

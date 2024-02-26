@@ -201,7 +201,7 @@ end
 -- Runtime:addEventListener("touch", toqueListener)
 Runtime:addEventListener("enterFrame", gameLoop)
 
-function createTitulo(sceneGroup)
+local function createTitulo(sceneGroup)
 
     local titulo = display.newText({
         text = "Antes da agricultura",
@@ -257,13 +257,13 @@ local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font
     end
 end
 
-function createTexto(sceneGroup)
+local function createTexto(sceneGroup)
     texto = "Nos primórdios, as pessoas eram predominantemente nômades. E a agricultura marcou o começo do sedentarismo humano, diretamente ligado às primeiras civilizações. Antes, para sobreviver, as pessoas se alimentavam caçando, coletando frutos e plantas."
         criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 450, largura - 40, 500, native.newFont("Bold"), 50, 55)
 end
 
 -- Player no audio
-function onTouch(event)
+local function onTouch(event)
     if event.phase == "ended" then
         if isAudioPlaying then
             isAudioPlaying = false
@@ -274,7 +274,7 @@ function onTouch(event)
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
             buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_ligado.png", 301, 167)
-            sound = audio.loadSound("audio/Page01/chuva.mp3")
+            sound = audio.loadSound("audio/Page01/audioPage01.mp3")
             audio.play(sound, {loops = -1})
         end
         buttonPlay.x = display.contentWidth - 150
@@ -285,7 +285,7 @@ end
 
 -- fução proxima página
 local function proximaPagina()
-    composer.gotoScene("Pages.Page04", {effect = "slideLeft", time = 500})
+    composer.gotoScene("Pages.Page05", {effect = "slideLeft", time = 500})
 end
 
 -- Função para criar a cena
