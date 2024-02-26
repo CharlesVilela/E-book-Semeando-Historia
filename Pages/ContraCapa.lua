@@ -2,27 +2,65 @@ local composer = require("composer")
 local scene = composer.newScene()
 
 local largura, altura = display.actualContentWidth, display.actualContentHeight
+-- Definindo altura da metade da tela
+local metade_altura = altura / 2
 
 local function createTitulo(sceneGroup)
     local titulo = display.newText({
-        text = "Page 02",
+        text = "Semeando a Historia",
         font = native.newFont("Bold"),
         fontSize = 85
     })
     titulo.x = display.contentCenterX
-    titulo.y = 300
+    titulo.y = 200
     titulo:setFillColor(1, 1, 1)
     sceneGroup:insert(titulo)
 end
 
-local function createSubTitulo(sceneGroup)
+local function createAutor(sceneGroup)
     local subtitulo = display.newText({
-        text = "Autor: Charles Vilela de Souza \n Ano: 2024",
+        text = "Autor: Charles Vilela de Souza",
         font = native.newFont("Bold"),
         fontSize = 70
     })
     subtitulo.x = display.contentCenterX
-    subtitulo.y = 450
+    subtitulo.y = 400
+    subtitulo:setFillColor(1, 1, 1)
+    sceneGroup:insert(subtitulo)
+end
+
+local function createAno(sceneGroup)
+    local subtitulo = display.newText({
+        text = "Ano: 2024",
+        font = native.newFont("Bold"),
+        fontSize = 70
+    })
+    subtitulo.x = display.contentCenterX
+    subtitulo.y = 600
+    subtitulo:setFillColor(1, 1, 1)
+    sceneGroup:insert(subtitulo)
+end
+
+local function createOrientador(sceneGroup)
+    local subtitulo = display.newText({
+        text = "Orientador: Ewerton Mendonça",
+        font = native.newFont("Bold"),
+        fontSize = 70
+    })
+    subtitulo.x = display.contentCenterX
+    subtitulo.y = 800
+    subtitulo:setFillColor(1, 1, 1)
+    sceneGroup:insert(subtitulo)
+end
+
+local function createDisciplina(sceneGroup)
+    local subtitulo = display.newText({
+        text = "Disciplina: Computação Gráfica \n e Sistemas Multimídia",
+        font = native.newFont("Bold"),
+        fontSize = 70
+    })
+    subtitulo.x = display.contentCenterX
+    subtitulo.y = 1000
     subtitulo:setFillColor(1, 1, 1)
     sceneGroup:insert(subtitulo)
 end
@@ -30,8 +68,17 @@ end
 -- create()
 function scene:create( event )
     local sceneGroup = self.view
+    -- Adicionar um retângulo azul para simular o céu
+    local ceu = display.newRect(sceneGroup, 0, 0, largura, metade_altura * 2)
+    ceu.anchorX = 0
+    ceu.anchorY = 0
+    ceu:setFillColor(0.53, 0.81, 0.98) -- Cor azul do céu
+
     createTitulo(sceneGroup)
-    -- createSubTitulo(sceneGroup)
+    createAutor(sceneGroup)
+    createAno(sceneGroup)
+    createOrientador(sceneGroup)
+    createDisciplina(sceneGroup)
 
     -- Area dos botoes de passar página
     local buttonProximaPagina = display.newImageRect(sceneGroup, "image/Buttons/proxima_pagina.png", 200, 200)
@@ -40,17 +87,7 @@ function scene:create( event )
 
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.Page03", {effect = "slideLeft", time = 500})
-        end
-    end)
-
-    local buttonPaginaAnterior = display.newImageRect(sceneGroup, "image/Buttons/pagina_anterior.png", 200, 200)
-    buttonPaginaAnterior.x = largura - 950
-    buttonPaginaAnterior.y = altura - 250 / 2 - 20
-
-    buttonPaginaAnterior:addEventListener("touch", function (event)
-        if event.phase == "ended" then
-            composer.gotoScene("Pages.Page01", {effect = "slideRight", time = 500})
+            composer.gotoScene("Pages.Page01", {effect = "slideLeft", time = 500})
         end
     end)
 end

@@ -339,13 +339,17 @@ function scene:create(event)
     buttonPlay.y = 200
     buttonPlay:addEventListener("touch", onTouch)
 
+    -- Area dos botoes de passar página
     local buttonProximaPagina = display.newImageRect(sceneGroup, "image/Buttons/proxima_pagina.png", 200, 200)
     buttonProximaPagina.x = largura - 250 / 2 - 20
     buttonProximaPagina.y = altura - 250 / 2 - 20
 
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.Page01", {effect = "slideLeft", time = 500})
+            -- gerarGafanhotos = false
+            -- removerGafanhotos()
+            -- stopAudio()
+            composer.gotoScene("Pages.ContraCapa", {effect = "slideLeft", time = 500})
         end
     end)
 
@@ -355,10 +359,12 @@ function scene:create(event)
 
     buttonPaginaAnterior:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.Page01", {effect = "slideRight", time = 500})
+            -- gerarGafanhotos = false
+            -- removerGafanhotos()
+            -- stopAudio()
+            composer.gotoScene("Pages.Page03", {effect = "slideRight", time = 500})
         end
     end)
-
 end
 
 function scene:show(event)
@@ -377,9 +383,9 @@ function scene:hide(event)
 
     if phase == "will" then
         -- composer.removeScene("Pages.Page05")
-        gerarGafanhotos = false
-        removerGafanhotos()
-        stopAudio()
+        -- gerarGafanhotos = false
+        -- removerGafanhotos()
+        -- stopAudio()
     elseif phase == "did" then
     end
 end

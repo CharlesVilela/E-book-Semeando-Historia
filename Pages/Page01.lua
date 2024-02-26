@@ -285,7 +285,7 @@ end
 
 -- fução proxima página
 local function proximaPagina()
-    composer.gotoScene("Pages.Page05", {effect = "slideLeft", time = 500})
+    composer.gotoScene("Pages.Page02", {effect = "slideLeft", time = 500})
 end
 
 -- Função para criar a cena
@@ -325,6 +325,16 @@ function scene:create(event)
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
             proximaPagina()
+        end
+    end)
+
+    local buttonPaginaAnterior = display.newImageRect(sceneGroup, "image/Buttons/pagina_anterior.png", 200, 200)
+    buttonPaginaAnterior.x = largura - 950
+    buttonPaginaAnterior.y = altura - 250 / 2 - 20
+
+    buttonPaginaAnterior:addEventListener("touch", function (event)
+        if event.phase == "ended" then
+            composer.gotoScene("Pages.Capa", {effect = "slideRight", time = 500})
         end
     end)
 

@@ -2,10 +2,12 @@ local composer = require("composer")
 local scene = composer.newScene()
 
 local largura, altura = display.actualContentWidth, display.actualContentHeight
+-- Definindo altura da metade da tela
+local metade_altura = altura / 2
 
 local function createTitulo(sceneGroup)
     local titulo = display.newText({
-        text = "Page 02",
+        text = "Semeando a Historia",
         font = native.newFont("Bold"),
         fontSize = 85
     })
@@ -30,8 +32,14 @@ end
 -- create()
 function scene:create( event )
     local sceneGroup = self.view
+    -- Adicionar um retângulo azul para simular o céu
+    local ceu = display.newRect(sceneGroup, 0, 0, largura, metade_altura * 2)
+    ceu.anchorX = 0
+    ceu.anchorY = 0
+    ceu:setFillColor(0.53, 0.81, 0.98) -- Cor azul do céu
+
     createTitulo(sceneGroup)
-    -- createSubTitulo(sceneGroup)
+    createSubTitulo(sceneGroup)
 
     -- Area dos botoes de passar página
     local buttonProximaPagina = display.newImageRect(sceneGroup, "image/Buttons/proxima_pagina.png", 200, 200)
@@ -40,17 +48,7 @@ function scene:create( event )
 
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.Page03", {effect = "slideLeft", time = 500})
-        end
-    end)
-
-    local buttonPaginaAnterior = display.newImageRect(sceneGroup, "image/Buttons/pagina_anterior.png", 200, 200)
-    buttonPaginaAnterior.x = largura - 950
-    buttonPaginaAnterior.y = altura - 250 / 2 - 20
-
-    buttonPaginaAnterior:addEventListener("touch", function (event)
-        if event.phase == "ended" then
-            composer.gotoScene("Pages.Page01", {effect = "slideRight", time = 500})
+            composer.gotoScene("Pages.Page01", {effect = "slideLeft", time = 500})
         end
     end)
 end
