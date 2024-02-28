@@ -6,56 +6,6 @@ local largura, altura = 768, 1024
 -- Definindo altura da metade da tela
 local metade_altura = altura / 2
 
-local startGravidade = false
-local gravidade = 0
-
-local peDeTrigo
-
-local function criarBase(sceneGroup)
-    local base = display.newRect(sceneGroup, 0, altura - 150, largura + 800, 50)
-    base:setFillColor(0.64, 0.16, 0.16) -- Defina a cor alpha para 0 para tornar a base invisível
-    physics.addBody(base, "static") -- Definindo a base como um corpo estático
-end
-
--- remover depois função não preciso mais
-local function criarObjeto(sceneGroup)
-    local objeto = display.newRect(sceneGroup, 100, altura - 150, 50, 50)
-    objeto:setFillColor(1, 0, 0)
-    physics.addBody(objeto, "dynamic", {density = 1.0, friction = 0.3, bounce = 0.2})
-    objeto.isSleepingAllowed = false -- Impede que o objeto durma (pode ser útil para detectar colisões)
-end
-
-local function criarSemente(sceneGroup, x, y)
-    local semente = display.newCircle(sceneGroup, x, y, 5)
-    semente:setFillColor(0.8, 0.7, 0.5) -- Cor da semente de trigo
-    physics.addBody(semente, "dynamic", {radius = 5})
-    semente.isSleepingAllowed = false
-end
-
-local function criarPeDeTrigo(sceneGroup)
-    peDeTrigo = display.newImageRect(sceneGroup, "image/Page02/plantacao_trigo.png", largura * 0.5, altura * 0.6)
-    peDeTrigo.x = largura * 0.5 - 150
-    peDeTrigo.y = altura - 150 - peDeTrigo.height * 0.4
-    physics.addBody(peDeTrigo, "static") -- Torna o pé de trigo um corpo estático
-end
-
--- Event listener para o acelerômetro
-local function onAccelerate(event, peDeTrigoX, peDeTrigoY)
-    if event.isShake then
-        local sceneGroup = scene.view
-        print("O dispositivo está sendo agitado!")
-        for i = 1, 10 do -- Gerar 10 sementes de trigo
-            -- Gerar sementes em torno das coordenadas do pé de trigo
-            local offsetX = math.random(-20, 20)
-            local offsetY = math.random(-20, 20)
-            criarSemente(sceneGroup, peDeTrigoX + offsetX, peDeTrigoY + offsetY)
-        end
-    end
-end
-Runtime:addEventListener("accelerometer", function(event)
-    onAccelerate(event, peDeTrigo.x, peDeTrigo.y)
-end)
-
 local function onTouch(event)
     local buttonSize = largura * 0.09
     if event.phase == "ended" then
@@ -79,7 +29,7 @@ end
 
 local function createTitulo(sceneGroup)
     local titulo = display.newText({
-        text = "Page 02",
+        text = "Page 06",
         font = native.newFont("Bold"),
         fontSize = largura * 0.1  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
@@ -147,7 +97,7 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
 end
 
 -- create()
-function scene:create(event)
+function scene:create( event )
     local sceneGroup = self.view
     -- Adicionar um retângulo azul para simular o céu
     local ceu = display.newRect(sceneGroup, 0, 0, largura, altura)
@@ -157,12 +107,6 @@ function scene:create(event)
 
     createTitulo(sceneGroup)
     -- createSubTitulo(sceneGroup)
-
-    physics.start()
-    --Criar a base (chão)
-    criarBase(sceneGroup)
-    -- criarObjeto(sceneGroup)
-    criarPeDeTrigo(sceneGroup)
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09
@@ -181,9 +125,9 @@ function scene:create(event)
     local buttonProximaPagina = display.newImageRect(scene.view, "image/Buttons/proxima_pagina.png", buttonSize, buttonSize)
     buttonProximaPagina.x = largura - buttonSize / 2 - 40
     buttonProximaPagina.y = altura - buttonSize / 2 - 30
-    buttonProximaPagina:addEventListener("touch", function(event)
+    buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.Page03", {effect = "slideLeft", time = 500})
+            composer.gotoScene("Pages.ContraCapa", {effect = "slideLeft", time = 500})
         end
     end)
     adicionarTextoBotaoProximaPagina(sceneGroup)
@@ -191,57 +135,58 @@ function scene:create(event)
     local buttonPaginaAnterior = display.newImageRect(sceneGroup, "image/Buttons/pagina_anterior.png", buttonSize, buttonSize)
     buttonPaginaAnterior.x = largura - buttonSize * 1.5 - 580
     buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
-    buttonPaginaAnterior:addEventListener("touch", function(event)
+    buttonPaginaAnterior:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.Page01", {effect = "slideRight", time = 500})
+            composer.gotoScene("Pages.Page05", {effect = "slideRight", time = 500})
         end
     end)
     adicionarTextoBotaoPaginaAnterior(sceneGroup)
-end
-
-function scene:show(event)
+end 
+  
+function scene:show( event )
     local sceneGroup = self.view
     local phase = event.phase
-
-    if (phase == "will") then
+  
+    if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-        -- physics.start()
-    elseif (phase == "did") then
+  
+    elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
     end
-end
-
--- hide()
-function scene:hide(event)
-
+  end
+  
+  
+  -- hide()
+  function scene:hide( event )
+  
     local sceneGroup = self.view
     local phase = event.phase
-
-    if (phase == "will") then
+  
+    if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        physics.stop()
-    elseif (phase == "did") then
+    elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
     end
-end
-
--- destroy()
-function scene:destroy(event)
-
+  end
+  
+  
+  -- destroy()
+  function scene:destroy( event )
+  
     local sceneGroup = self.view
-    
     -- Code here runs prior to the removal of scene's view
     sceneGroup:removeSelf()
     sceneGroup = nil
-
-end
-
--- -----------------------------------------------------------------------------------
--- Scene event function listeners
--- -----------------------------------------------------------------------------------
-scene:addEventListener("create", scene)
-scene:addEventListener("show", scene)
-scene:addEventListener("hide", scene)
-scene:addEventListener("destroy", scene)
+  
+  end
+  
+  
+  -- -----------------------------------------------------------------------------------
+  -- Scene event function listeners
+  -- -----------------------------------------------------------------------------------
+  scene:addEventListener( "create", scene )
+  scene:addEventListener( "show", scene )
+  scene:addEventListener( "hide", scene )
+  scene:addEventListener( "destroy", scene )
 
 return scene
