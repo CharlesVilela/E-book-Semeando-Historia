@@ -10,11 +10,22 @@ local startGravidade = false
 local gravidade = 0
 
 local peDeTrigo
+local semente
+local chao
+local mySceneGroup
 
-local function criarBase(sceneGroup)
-    local base = display.newRect(sceneGroup, 0, altura - 150, largura + 800, 50)
-    base:setFillColor(0.64, 0.16, 0.16) -- Defina a cor alpha para 0 para tornar a base invisível
-    physics.addBody(base, "static") -- Definindo a base como um corpo estático
+local function criarChao(sceneGroup)
+    chao = display.newRect(sceneGroup, 0, altura - 90, largura + 800, 180)
+    chao:setFillColor(0.64, 0.16, 0.16) -- Defina a cor alpha para 0 para tornar a base invisível
+    chao.userData = {name = "chao"}
+    physics.addBody(chao, "static") -- Definindo a base como um corpo estático
+end
+
+local function criarBarreira(sceneGroup)
+    chao = display.newRect(sceneGroup, 700, altura - 280, 200, 200)
+    chao:setFillColor(1, 1, 1) -- Defina a cor alpha para 0 para tornar a base invisível
+    chao.userData = {name = "chao"}
+    physics.addBody(chao, "static") -- Definindo a base como um corpo estático
 end
 
 -- remover depois função não preciso mais
@@ -26,10 +37,12 @@ local function criarObjeto(sceneGroup)
 end
 
 local function criarSemente(sceneGroup, x, y)
-    local semente = display.newCircle(sceneGroup, x, y, 5)
+    semente = display.newCircle(sceneGroup, x, y, 5)
     semente:setFillColor(0.8, 0.7, 0.5) -- Cor da semente de trigo
-    physics.addBody(semente, "dynamic", {radius = 5})
     semente.isSleepingAllowed = false
+    semente.userData = {name = "semente"}
+    physics.addBody(semente, "dynamic", {radius = 5})
+    -- physics.setGravity(0, 0.5)
 end
 
 local function criarPeDeTrigo(sceneGroup)
@@ -38,6 +51,52 @@ local function criarPeDeTrigo(sceneGroup)
     peDeTrigo.y = altura - 150 - peDeTrigo.height * 0.4
     physics.addBody(peDeTrigo, "static") -- Torna o pé de trigo um corpo estático
 end
+
+local function onCollision(event)
+    if event.phase == "began" then
+        local obj1 = event.object1
+        local obj2 = event.object2
+
+        print("Chamou a função onCollision, antes de entrar no primeiro IF")
+        if obj1.userData and obj2.userData then
+            print(obj1.userData.name)
+            print(obj2.userData.name)
+            print("Chamou a função onCollision, antes de entrar no segundo IF")
+            -- Verificar se o objeto é uma semente e o chão
+            if ((obj1.userData.name == "semente" and obj2.userData.name == "chao") or (obj1.userData.name == "chao" and obj2.userData.name == "semente")) then
+                print("Entrou na verificação se é semente e chao")
+
+                local semente
+
+                -- Define a semente como objeto correto
+                if (obj1.userData.name == "semente") then
+                    semente = obj1
+                else
+                    semente = obj2
+                end 
+
+                -- Agende a remoção da física da semente após 15 segundos
+                timer.performWithDelay(5000, function()
+                    physics.removeBody(semente)
+                    -- semente:removeEventListener("postCollision", onPostCollision)
+                    print("Física da semente foi removida após 15 segundos")
+                    -- Ajuste a posição vertical da semente para simular o plantio
+                    semente.y = semente.y + 10
+                    
+                    local planta = display.newImageRect(mySceneGroup, "image/Page02/semente_germinada.png", 50, 100)
+                    planta.x = semente.x
+                    planta.y = semente.y
+                    -- semente:removeSelf()
+                end)
+            end
+        else
+            print("Objetos sem userData...")
+        end
+    end
+end
+
+-- Adicionar o ouvinte de colisão
+Runtime:addEventListener("collision", onCollision)
 
 -- Event listener para o acelerômetro
 local function onAccelerate(event, peDeTrigoX, peDeTrigoY)
@@ -55,6 +114,7 @@ end
 Runtime:addEventListener("accelerometer", function(event)
     onAccelerate(event, peDeTrigo.x, peDeTrigo.y)
 end)
+
 
 local function onTouch(event)
     local buttonSize = largura * 0.09
@@ -149,6 +209,7 @@ end
 -- create()
 function scene:create(event)
     local sceneGroup = self.view
+    mySceneGroup = sceneGroup
     -- Adicionar um retângulo azul para simular o céu
     local ceu = display.newRect(sceneGroup, 0, 0, largura, altura)
     ceu.anchorX = 0
@@ -160,9 +221,10 @@ function scene:create(event)
 
     physics.start()
     --Criar a base (chão)
-    criarBase(sceneGroup)
+    criarChao(sceneGroup)
     -- criarObjeto(sceneGroup)
     criarPeDeTrigo(sceneGroup)
+    -- criarBarreira(sceneGroup)
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09
