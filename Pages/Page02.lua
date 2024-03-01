@@ -15,6 +15,7 @@ local chao
 local mySceneGroup
 local sementes = {}
 local balaoTexto
+local isIdeia = false
 
 
 local function criarChao(sceneGroup)
@@ -154,6 +155,9 @@ local function onCollision(event)
                                 altura_semente = 200
                             elseif string.find(imagem, "trigo_decima_muda.png") then
                                 altura_semente = 250
+                                local ideia = display.newImageRect("image/Page02/ideia.png", largura * 0.09, altura * 0.09) 
+                                ideia.x = largura - 95
+                                ideia.y = altura - altura * 0.43 -- Ajuste para a parte inferior da tela
                             end
 
                             semente = display.newImageRect(mySceneGroup, imagem, 50, altura_semente)
@@ -359,9 +363,9 @@ function scene:create(event)
     -- Exibir o balão com o texto "Mexa o Dispositivo"
     exibirBalao()
 
-    local nomade = display.newImageRect("image/Page01/nomade.png", largura * 0.292, altura * 0.272) 
-    nomade.x = largura - 100
-    nomade.y = altura - altura * 0.136 -- Ajuste para a parte inferior da tela
+    local nomade = display.newImageRect("image/Page02/nomade2.png", largura * 0.4, altura * 0.4) 
+    nomade.x = largura - 200
+    nomade.y = altura - altura * 0.28 -- Ajuste para a parte inferior da tela
 
     physics.start()
     --Criar a base (chão)
