@@ -13,6 +13,9 @@ local peDeTrigo
 local semente
 local chao
 local mySceneGroup
+local sementes = {}
+local balaoTexto
+
 
 local function criarChao(sceneGroup)
     chao = display.newRect(sceneGroup, 0, altura - 90, largura + 800, 180)
@@ -22,18 +25,10 @@ local function criarChao(sceneGroup)
 end
 
 local function criarBarreira(sceneGroup)
-    chao = display.newRect(sceneGroup, 700, altura - 280, 200, 200)
-    chao:setFillColor(1, 1, 1) -- Defina a cor alpha para 0 para tornar a base invisível
-    chao.userData = {name = "chao"}
-    physics.addBody(chao, "static") -- Definindo a base como um corpo estático
-end
-
--- remover depois função não preciso mais
-local function criarObjeto(sceneGroup)
-    local objeto = display.newRect(sceneGroup, 100, altura - 150, 50, 50)
-    objeto:setFillColor(1, 0, 0)
-    physics.addBody(objeto, "dynamic", {density = 1.0, friction = 0.3, bounce = 0.2})
-    objeto.isSleepingAllowed = false -- Impede que o objeto durma (pode ser útil para detectar colisões)
+    criarBarreira = display.newRect(sceneGroup, 0, altura - 90, largura + 800, 130)
+    criarBarreira:setFillColor(1, 1, 1) -- Defina a cor alpha para 0 para tornar a base invisível
+    criarBarreira.userData = {name = "barreira"}
+    physics.addBody(criarBarreira, "static") -- Definindo a base como um corpo estático
 end
 
 local function criarSemente(sceneGroup, x, y)
@@ -46,10 +41,46 @@ local function criarSemente(sceneGroup, x, y)
 end
 
 local function criarPeDeTrigo(sceneGroup)
-    peDeTrigo = display.newImageRect(sceneGroup, "image/Page02/plantacao_trigo.png", largura * 0.5, altura * 0.6)
+    peDeTrigo = display.newImageRect(sceneGroup, "image/Page02/plantacao_trigo.png", largura * 0.5, altura * 0.4)
     peDeTrigo.x = largura * 0.5 - 150
-    peDeTrigo.y = altura - 150 - peDeTrigo.height * 0.4
+    peDeTrigo.y = altura - 140 - peDeTrigo.height * 0.4
     physics.addBody(peDeTrigo, "static") -- Torna o pé de trigo um corpo estático
+end
+
+local function criarImagensFasesTrigo()
+     sementes = {
+       "image/Page02/semente_germinada.png",
+       "image/Page02/trigo_primeira_muda.png",
+       "image/Page02/trigo_segunda_muda.png",
+       "image/Page02/trigo_terceira_muda.png",
+       "image/Page02/trigo_quarta_muda.png",
+       "image/Page02/trigo_quinta_muda.png",
+       "image/Page02/trigo_sexta_muda.png",
+       "image/Page02/trigo_setima_muda.png",
+       "image/Page02/trigo_oitava_muda.png",
+       "image/Page02/trigo_nona_muda.png",
+       "image/Page02/trigo_decima_muda.png",
+     }
+end
+
+local function exibirBalao()
+    -- Exibir o balão com o texto "Mexa o Dispositivo"
+    balaoTexto = display.newText({
+        text = "Chacoalhe \n o Dispositivo",
+        x = display.contentCenterX + 130,
+        y = display.contentCenterY + 150,
+        font = native.systemFont,
+        fontSize = 30
+    })
+    balaoTexto:setFillColor(1, 0, 0)  -- Cor vermelha para o texto
+end
+
+local function esconderBalao()
+    -- Remover o balão da cena
+    if balaoTexto then
+        balaoTexto:removeSelf()
+        balaoTexto = nil
+    end
 end
 
 local function onCollision(event)
@@ -57,36 +88,89 @@ local function onCollision(event)
         local obj1 = event.object1
         local obj2 = event.object2
 
-        print("Chamou a função onCollision, antes de entrar no primeiro IF")
         if obj1.userData and obj2.userData then
-            print(obj1.userData.name)
-            print(obj2.userData.name)
-            print("Chamou a função onCollision, antes de entrar no segundo IF")
             -- Verificar se o objeto é uma semente e o chão
             if ((obj1.userData.name == "semente" and obj2.userData.name == "chao") or (obj1.userData.name == "chao" and obj2.userData.name == "semente")) then
-                print("Entrou na verificação se é semente e chao")
-
                 local semente
-
                 -- Define a semente como objeto correto
                 if (obj1.userData.name == "semente") then
                     semente = obj1
                 else
                     semente = obj2
                 end 
-
                 -- Agende a remoção da física da semente após 15 segundos
-                timer.performWithDelay(5000, function()
-                    physics.removeBody(semente)
-                    -- semente:removeEventListener("postCollision", onPostCollision)
-                    print("Física da semente foi removida após 15 segundos")
-                    -- Ajuste a posição vertical da semente para simular o plantio
-                    semente.y = semente.y + 10
-                    
-                    local planta = display.newImageRect(mySceneGroup, "image/Page02/semente_germinada.png", 50, 100)
-                    planta.x = semente.x
-                    planta.y = semente.y
-                    -- semente:removeSelf()
+                timer.performWithDelay(2000, function()
+                    physics.removeBody(semente)                    
+
+                    local posicao_inicial_x = semente.x
+                    local posicao_inicial_y = semente.y
+
+                    local fases_trigo = {
+                        "image/Page02/semente_germinada.png",
+                        "image/Page02/trigo_primeira_muda.png",
+                        "image/Page02/trigo_segunda_muda.png",
+                        "image/Page02/trigo_terceira_muda.png",
+                        "image/Page02/trigo_quarta_muda.png",
+                        "image/Page02/trigo_quinta_muda.png",
+                        "image/Page02/trigo_sexta_muda.png",
+                        "image/Page02/trigo_setima_muda.png",
+                        "image/Page02/trigo_oitava_muda.png",
+                        "image/Page02/trigo_nona_muda.png",
+                        "image/Page02/trigo_decima_muda.png"
+                    }
+
+                    local fase_atual = 1
+
+                    local function proximaFase()
+                        -- Verificar se há uma fase posterior
+                        if fase_atual < #fases_trigo then
+                            -- Remover a imagem atual da semente
+                            display.remove(semente)
+
+                            -- Criar a próxima fase da imagem da semente
+                            local imagem = fases_trigo[fase_atual + 1]
+                            local altura_semente = 0
+                            local altura_semente_original = 50 -- Altura original da semente
+
+                            if string.find(imagem, "semente_germinada.png") then
+                                altura_semente = 25
+                            elseif string.find(imagem, "trigo_primeira_muda.png") then
+                                altura_semente = 35
+                            elseif string.find(imagem, "trigo_segunda_muda.png") then
+                                altura_semente = 45
+                            elseif string.find(imagem, "trigo_terceira_muda.png") then
+                                altura_semente = 55
+                            elseif string.find(imagem, "trigo_quarta_muda.png") then
+                                altura_semente = 65
+                            elseif string.find(imagem, "trigo_quinta_muda.png") then
+                                altura_semente = 75
+                            elseif string.find(imagem, "trigo_sexta_muda.png") then
+                                altura_semente = 100
+                            elseif string.find(imagem, "trigo_setima_muda.png") then
+                                altura_semente = 125
+                            elseif string.find(imagem, "trigo_oitava_muda.png") then
+                                altura_semente = 150
+                            elseif string.find(imagem, "trigo_nona_muda.png") then
+                                altura_semente = 200
+                            elseif string.find(imagem, "trigo_decima_muda.png") then
+                                altura_semente = 250
+                            end
+
+                            semente = display.newImageRect(mySceneGroup, imagem, 50, altura_semente)
+                            semente.x = posicao_inicial_x
+                            -- Calcular a diferença na altura para ajustar a posição Y
+                            local diferenca_altura = altura_semente - altura_semente_original
+                            semente.y = posicao_inicial_y - diferenca_altura / 2 -- Ajuste para manter a mesma posição Y
+
+                            -- Atualizar o contador de fase
+                            fase_atual = fase_atual + 1
+                        else
+                            -- Se não houver mais fases, remover o ouvinte de colisão
+                            Runtime:removeEventListener("collision", onCollision)
+                        end
+                    end
+                    -- Ativar a mudança de fase a cada 5 segundos
+                    timer.performWithDelay(5000, proximaFase, 10)
                 end)
             end
         else
@@ -94,15 +178,16 @@ local function onCollision(event)
         end
     end
 end
-
 -- Adicionar o ouvinte de colisão
 Runtime:addEventListener("collision", onCollision)
+
 
 -- Event listener para o acelerômetro
 local function onAccelerate(event, peDeTrigoX, peDeTrigoY)
     if event.isShake then
+        -- Esconder o balão quando o dispositivo é movido
+        esconderBalao()
         local sceneGroup = scene.view
-        print("O dispositivo está sendo agitado!")
         for i = 1, 10 do -- Gerar 10 sementes de trigo
             -- Gerar sementes em torno das coordenadas do pé de trigo
             local offsetX = math.random(-20, 20)
@@ -139,12 +224,12 @@ end
 
 local function createTitulo(sceneGroup)
     local titulo = display.newText({
-        text = "Page 02",
+        text = "Os Primórdios da Agricultura",
         font = native.newFont("Bold"),
-        fontSize = largura * 0.1  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
+        fontSize = 40  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.3
+    titulo.y = altura * 0.07
     titulo:setFillColor(1, 1, 1)
     sceneGroup:insert(titulo)
 end
@@ -159,6 +244,52 @@ local function createSubTitulo(sceneGroup)
     subtitulo.y = altura * 0.45
     subtitulo:setFillColor(1, 1, 1)
     sceneGroup:insert(subtitulo)
+end
+
+local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font, fontSize, lineHeight)
+    local words = {}
+    for word in text:gmatch("%S+") do
+        table.insert(words, word)
+    end
+
+    local lines = {}
+    local line = ""
+    local lineWidth = 0
+    local spaceWidth = fontSize * 0.3 -- Estimativa da largura do espaço entre palavras
+
+    for i, word in ipairs(words) do
+        local wordWidth = string.len(word) * (fontSize * 0.5) -- Estimativa da largura da palavra
+
+        if lineWidth + wordWidth < width then
+            line = line .. " " .. word
+            lineWidth = lineWidth + wordWidth + spaceWidth
+        else
+            table.insert(lines, line)
+            line = word
+            lineWidth = wordWidth
+        end
+    end
+    table.insert(lines, line)
+
+    for i, line in ipairs(lines) do
+        local texto = display.newText({
+            text = line,
+            x = x,
+            y = y + (i - 1) * lineHeight,
+            width = width,
+            font = font,
+            fontSize = fontSize,
+            align = "justify"
+        })
+        texto:setFillColor(1, 1, 1)
+        sceneGroup:insert(texto)
+    end
+end
+
+-- Função para criar o texto
+local function createTexto(sceneGroup)
+    texto = "Há cerca de doze mil anos, durante a Pré-história, alguns indivíduos de povos caçadores-coletores notaram que alguns grãos que eram coletados da natureza para a sua alimentação poderiam ser enterrados, isto é, 'semeados' a fim de produzir novas plantas iguais às que os originaram.Essa prática permitiu o aumento da oferta de alimento dessas pessoas, as plantas começaram a ser cultivadas muito próximas uma das outras. Isso porque elas podiam produzir frutos, que eram facilmente colhidos quando madurassem, o que permitia uma maior produtividade das plantas cultivadas em relação ao seu habitat natural. Logo, as frequentes e perigosas buscas à procura de alimentos eram evitadas. Com o tempo, foram selecionados entre os grãos selvagens aqueles que possuíam as características que mais interessavam aos primeiros agricultores, tais como tamanho, produtividade, sabor etc. Assim surgiu o cultivo das primeiras plantas domesticadas, entre as quais se inclui o trigo e a cevada."
+    criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 110, largura - 60, 100, native.newFont("Bold"), 25, 30)
 end
 
 local function adicionarTextoBotaoAudio(sceneGroup)
@@ -214,17 +345,29 @@ function scene:create(event)
     local ceu = display.newRect(sceneGroup, 0, 0, largura, altura)
     ceu.anchorX = 0
     ceu.anchorY = 0
-    ceu:setFillColor(0.53, 0.81, 0.98) -- Cor azul do céu
+    ceu:setFillColor(0.53, 0.81, 0.98)-- Cor azul do céu
 
-    createTitulo(sceneGroup)
-    -- createSubTitulo(sceneGroup)
+    -- Adicionar a imagem de fundo na parte inferior da tela
+    local background = display.newImageRect(sceneGroup, "image/Page02/texto2.png", largura + 50, altura * 0.600)
+    background.anchorX = 0
+    background.anchorY = 1
+    background.x = - 30
+    background.y = altura - 400
+
+    -- createTitulo(sceneGroup)
+    -- createTexto(sceneGroup)
+    -- Exibir o balão com o texto "Mexa o Dispositivo"
+    exibirBalao()
+
+    local nomade = display.newImageRect("image/Page01/nomade.png", largura * 0.292, altura * 0.272) 
+    nomade.x = largura - 100
+    nomade.y = altura - altura * 0.136 -- Ajuste para a parte inferior da tela
 
     physics.start()
     --Criar a base (chão)
     criarChao(sceneGroup)
-    -- criarObjeto(sceneGroup)
     criarPeDeTrigo(sceneGroup)
-    -- criarBarreira(sceneGroup)
+    criarImagensFasesTrigo()
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09
