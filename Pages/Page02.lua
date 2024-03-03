@@ -294,8 +294,8 @@ end
 
 -- Função para criar o texto
 local function createTexto(sceneGroup)
-    texto = "Há cerca de doze mil anos, durante a Pré-história, alguns indivíduos de povos caçadores-coletores notaram que alguns grãos que eram coletados da natureza para a sua alimentação poderiam ser enterrados, isto é, 'semeados' a fim de produzir novas plantas iguais às que os originaram.Essa prática permitiu o aumento da oferta de alimento dessas pessoas, as plantas começaram a ser cultivadas muito próximas uma das outras. Isso porque elas podiam produzir frutos, que eram facilmente colhidos quando madurassem, o que permitia uma maior produtividade das plantas cultivadas em relação ao seu habitat natural. Logo, as frequentes e perigosas buscas à procura de alimentos eram evitadas. Com o tempo, foram selecionados entre os grãos selvagens aqueles que possuíam as características que mais interessavam aos primeiros agricultores, tais como tamanho, produtividade, sabor etc. Assim surgiu o cultivo das primeiras plantas domesticadas, entre as quais se inclui o trigo e a cevada."
-    criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 110, largura - 60, 100, native.newFont("Bold"), 25, 30)
+    texto = "Há cerca de doze mil anos, durante a Pré-história, alguns indivíduos de povos caçadores-coletores notaram que alguns grãos que eram coletados da natureza para a sua alimentação poderiam ser enterrados, isto é, 'semeados' a fim de produzir novas plantas iguais às que os originaram."
+    criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 150, largura - 60, 100, native.newFont("Bold"), 35, 40)
 end
 
 local function adicionarTextoBotaoAudio(sceneGroup)
@@ -353,15 +353,15 @@ function scene:create(event)
     ceu.anchorY = 0
     ceu:setFillColor(0.53, 0.81, 0.98)-- Cor azul do céu
 
-    -- Adicionar a imagem de fundo na parte inferior da tela
-    local background = display.newImageRect(sceneGroup, "image/Page02/texto2.png", largura + 50, altura * 0.600)
-    background.anchorX = 0
-    background.anchorY = 1
-    background.x = - 30
-    background.y = altura - 400
+    -- -- Adicionar a imagem de fundo na parte inferior da tela
+    -- local background = display.newImageRect(sceneGroup, "image/Page02/texto2.png", largura + 50, altura * 0.600)
+    -- background.anchorX = 0
+    -- background.anchorY = 1
+    -- background.x = - 30
+    -- background.y = altura - 400
 
-    -- createTitulo(sceneGroup)
-    -- createTexto(sceneGroup)
+    createTitulo(sceneGroup)
+    createTexto(sceneGroup)
     -- Exibir o balão com o texto "Mexa o Dispositivo"
     exibirBalao(sceneGroup)
 
