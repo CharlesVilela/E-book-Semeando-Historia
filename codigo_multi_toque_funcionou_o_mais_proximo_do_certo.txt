@@ -1,0 +1,149 @@
+local composer = require("composer")
+
+-- Definir configurações da cena
+local scene = composer.newScene()
+local mySceneGroup
+
+-- Definindo largura e altura específicas
+local largura, altura = 768, 1024
+
+local physics = require("physics")
+physics.start()
+physics.setGravity(0, 0)
+
+-- Ativar multitouch
+system.activate("multitouch")
+
+-- Mantenha o controle dos objetos que estão sendo tocados
+local touchedObjects = {}
+
+local function createTitulo(sceneGroup)
+
+  local titulo = display.newText({
+    text = "Multiplos toques",
+    font = native.newFont("Bold"),
+    fontSize = 60
+  })
+  -- Ajuste a posição do titulo para a parte superior da tela
+  titulo.x = display.contentCenterX
+  titulo.y = altura * 0.293 - 200
+  -- Define a cor do titulo
+  titulo:setFillColor(1, 1, 1)
+  -- Insere o titulo no grupo da cena
+  sceneGroup:insert(titulo)
+end
+
+-- Função para lidar com eventos de toque
+local function touchListener(event)
+    local phase = event.phase
+    local target = event.target
+
+    if phase == "began" then
+        display.getCurrentStage():setFocus(target, event.id)
+        target.isFocus = true
+
+        -- Armazene a posição inicial do toque
+        target.markX = event.x - target.x
+        target.markY = event.y - target.y
+
+    elseif target.isFocus then
+        if phase == "moved" then
+            -- Atualize a posição do objeto
+            target.x = event.x - target.markX
+            target.y = event.y - target.markY
+
+            -- Encontre o outro objeto na cena
+            local otherObject
+            for i = 1, mySceneGroup.numChildren do
+                local child = mySceneGroup[i]
+                if child ~= target then
+                    otherObject = child
+                    break
+                end
+            end
+
+            -- Espelhe o outro objeto
+            if otherObject then
+                -- Calcule a posição do segundo objeto em relação ao primeiro
+                local dx = event.x - target.markX - otherObject.x
+                local dy = event.y - target.markY - otherObject.y
+
+                -- Reduza o raio do giro dos objetos
+                local radius = 50
+
+                -- Atualize a posição do segundo objeto apenas se estiver dentro dos limites da tela
+                if otherObject.x + dx * radius / math.sqrt(dx^2 + dy^2) > 0 and otherObject.x + dx * radius / math.sqrt(dx^2 + dy^2) < display.contentWidth
+                    and otherObject.y + dy * radius / math.sqrt(dx^2 + dy^2) > 0 and otherObject.y + dy * radius / math.sqrt(dx^2 + dy^2) < display.contentHeight then
+                    otherObject.x = target.x + dx * radius / math.sqrt(dx^2 + dy^2)
+                    otherObject.y = target.y + dy * radius / math.sqrt(dx^2 + dy^2)
+                end
+            end
+
+        elseif phase == "ended" or phase == "cancelled" then
+            -- Remova o foco do objeto
+            display.getCurrentStage():setFocus(target, nil)
+            target.isFocus = false
+        end
+    end
+
+    return true
+end
+
+
+
+
+
+
+
+function scene:create(event)
+  local sceneGroup = self.view
+
+  mySceneGroup = sceneGroup
+  -- Criar um grupo para conter os dois retângulos
+  local group = display.newGroup()
+  sceneGroup:insert(group)
+
+  -- Criar dois objetos de exibição na tela e adicioná-los ao grupo
+  local newRect1 = display.newRect(group, display.contentCenterX - 20, 240, 120, 120)
+  newRect1:setFillColor(1, 0, 0.3)
+  physics.addBody(newRect1, "dynamic", { density = 1.0, friction = 0.3, bounce = 0.2 })
+  
+  local newRect2 = display.newRect(group, display.contentCenterX + 100, 240, 120, 120)
+  newRect2:setFillColor(0.3, 0, 1)
+  physics.addBody(newRect2, "dynamic", { density = 1.0, friction = 0.3, bounce = 0.2 })
+
+  -- Criar uma junta entre os objetos
+  local joint = physics.newJoint("weld", newRect1, newRect2, newRect1.x, newRect1.y)
+
+  createTitulo(sceneGroup)
+
+  -- Adicionar um ouvinte de toque a cada objeto
+  newRect1:addEventListener("touch", touchListener)
+  newRect2:addEventListener("touch", touchListener)
+
+  physics.start()
+
+end
+
+function scene:destroy(event)
+    -- Remova os ouvintes de toque dos objetos
+    local newRect1 = sceneGroup:getChild("newRect1")
+    newRect1:removeEventListener("touch", touchListener)
+    local newRect2 = sceneGroup:getChild("newRect2")
+    newRect2:removeEventListener("touch", touchListener)
+  
+    -- Remova o grupo da cena
+    sceneGroup:remove(group)
+  
+    -- Libere as variáveis ​​para evitar vazamentos de memória
+    sceneGroup = nil
+    group = nil
+    touchedObjects = nil
+end
+
+-- Escute o evento de cena
+scene:addEventListener("create", scene)
+scene:addEventListener("destroy", scene)
+
+
+return scene
