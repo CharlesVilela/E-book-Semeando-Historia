@@ -64,7 +64,7 @@ local function criarImagensFasesTrigo()
      }
 end
 
-local function exibirBalao()
+local function exibirBalao(sceneGroup)
     -- Exibir o balão com o texto "Mexa o Dispositivo"
     balaoTexto = display.newText({
         text = "Chacoalhe \n o Dispositivo",
@@ -74,6 +74,7 @@ local function exibirBalao()
         fontSize = 30
     })
     balaoTexto:setFillColor(1, 0, 0)  -- Cor vermelha para o texto
+    sceneGroup:insert(balaoTexto)
 end
 
 local function esconderBalao()
@@ -158,6 +159,7 @@ local function onCollision(event)
                                 local ideia = display.newImageRect("image/Page02/ideia.png", largura * 0.09, altura * 0.09) 
                                 ideia.x = largura - 95
                                 ideia.y = altura - altura * 0.43 -- Ajuste para a parte inferior da tela
+                                mySceneGroup:insert(ideia)
                             end
 
                             semente = display.newImageRect(mySceneGroup, imagem, 50, altura_semente)
@@ -361,11 +363,12 @@ function scene:create(event)
     -- createTitulo(sceneGroup)
     -- createTexto(sceneGroup)
     -- Exibir o balão com o texto "Mexa o Dispositivo"
-    exibirBalao()
+    exibirBalao(sceneGroup)
 
     local nomade = display.newImageRect("image/Page02/nomade2.png", largura * 0.4, altura * 0.4) 
     nomade.x = largura - 200
     nomade.y = altura - altura * 0.28 -- Ajuste para a parte inferior da tela
+    sceneGroup:insert(nomade)
 
     physics.start()
     --Criar a base (chão)

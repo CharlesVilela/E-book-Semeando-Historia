@@ -127,7 +127,7 @@ function scene:create( event )
     buttonProximaPagina.y = altura - buttonSize / 2 - 30
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.ContraCapa", {effect = "slideLeft", time = 500})
+            composer.gotoScene("Pages.Capa", {effect = "slideLeft", time = 500})
         end
     end)
     adicionarTextoBotaoProximaPagina(sceneGroup)
@@ -137,7 +137,7 @@ function scene:create( event )
     buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
     buttonPaginaAnterior:addEventListener("touch", function (event)
         if event.phase == "ended" then
-            composer.gotoScene("Pages.Page04", {effect = "slideRight", time = 500})
+            composer.gotoScene("Pages.Page06", {effect = "slideRight", time = 500})
         end
     end)
     adicionarTextoBotaoPaginaAnterior(sceneGroup)

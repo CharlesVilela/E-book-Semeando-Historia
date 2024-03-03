@@ -6,6 +6,75 @@ local largura, altura = 768, 1024
 -- Definindo altura da metade da tela
 local metade_altura = altura / 2
 
+local touch1_startX, touch1_startY, touch2_startX, touch2_startY -- Variáveis para armazenar as posições iniciais dos dedos
+local shovel -- Referência para a pá (retângulo)
+
+-- Activate multitouch
+system.activate( "multitouch" )
+
+local function criarChao(sceneGroup)
+    chao = display.newRect(sceneGroup, 0, altura - 90, largura + 800, 180)
+    chao:setFillColor(0.64, 0.16, 0.16) -- Defina a cor alpha para 0 para tornar a base invisível
+    chao.userData = {name = "chao"}
+    physics.addBody(chao, "static") -- Definindo a base como um corpo estático
+end
+
+local function calculateAngle(x1, y1, x2, y2)
+    local dx = x2 - x1
+    local dy = y2 - y1
+    local angle = math.atan2(dy, dx) * 180 / math.pi
+    return angle
+end
+
+local shovel -- Agora a pá é uma variável global para que possa ser acessada em diferentes partes do código
+
+local function onTouchCavarChao(event)
+    if event.numTouches == 2 then
+        if event.phase == "began" then
+            -- Initialize touch positions
+            touch1_startX, touch1_startY = event.xStart, event.yStart
+            touch2_startX, touch2_startY = event.xStart2, event.yStart2
+            
+            -- Create shovel at the average position of the touches
+            local shovelX = (event.xStart + event.xStart2) / 2
+            local shovelY = (event.yStart + event.yStart2) / 2
+            shovel = display.newRect(shovelX, shovelY, 30, 100)
+            shovel:setFillColor(0.8, 0.8, 0.8)
+            shovel.anchorY = 0.5
+            scene.view:insert(shovel) -- Insert shovel into the scene's view
+            
+            -- Set focus on shovel to handle multitouch
+            display.getCurrentStage():setFocus(shovel, event.id)
+            shovel.isFocus = true
+        elseif event.phase == "moved" and shovel then -- Check if shovel exists
+            -- Calculate angle between touches
+            local angle = calculateAngle(event.x, event.y, event.x2, event.y2)
+
+            -- Move shovel based on the average movement of the touches
+            local shovelX = (event.x + event.x2) / 2
+            local shovelY = (event.y + event.y2) / 2
+            shovel.x, shovel.y = shovelX, shovelY
+            
+            -- Adjust shovel size and rotation based on the touches
+            shovel.height = math.max(30, math.abs(event.y2 - event.y), math.abs(event.yStart2 - touch2_startY))
+            shovel:setRotation(angle)
+        elseif event.phase == "ended" or event.phase == "cancelled" then
+            -- Release focus on shovel
+            display.getCurrentStage():setFocus(shovel, nil)
+            shovel.isFocus = false
+            -- Remove shovel from the scene
+            shovel:removeSelf()
+            shovel = nil
+        end
+    end
+    return true
+end
+
+-- Adicione o event listener de toque para detectar o movimento de cavar
+Runtime:addEventListener("touch", onTouchCavarChao)
+
+
+
 local function onTouch(event)
     local buttonSize = largura * 0.09
     if event.phase == "ended" then
@@ -107,6 +176,9 @@ function scene:create( event )
 
     createTitulo(sceneGroup)
     -- createSubTitulo(sceneGroup)
+    
+    physics.start()
+    criarChao(sceneGroup)
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09
@@ -153,11 +225,10 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
     end
-  end
+end
   
-  
-  -- hide()
-  function scene:hide( event )
+-- hide()
+function scene:hide( event )
   
     local sceneGroup = self.view
     local phase = event.phase
@@ -167,26 +238,24 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
     end
-  end
+end
   
-  
-  -- destroy()
-  function scene:destroy( event )
+-- destroy()
+function scene:destroy( event )
   
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
     sceneGroup:removeSelf()
     sceneGroup = nil
   
-  end
+end
   
-  
-  -- -----------------------------------------------------------------------------------
-  -- Scene event function listeners
-  -- -----------------------------------------------------------------------------------
-  scene:addEventListener( "create", scene )
-  scene:addEventListener( "show", scene )
-  scene:addEventListener( "hide", scene )
-  scene:addEventListener( "destroy", scene )
+-- -----------------------------------------------------------------------------------
+-- Scene event function listeners
+-- -----------------------------------------------------------------------------------
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
 return scene

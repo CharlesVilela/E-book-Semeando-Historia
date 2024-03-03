@@ -1,0 +1,94 @@
+-- ############################# Código que funciona os multiplos toques no dois objetos ###########################################
+
+local composer = require("composer")
+
+-- Definir configurações da cena
+local scene = composer.newScene()
+
+-- Ativar multitouch
+system.activate("multitouch")
+
+-- Mantenha o controle dos objetos que estão sendo tocados
+local touchedObjects = {}
+
+-- Função para lidar com eventos de toque
+local function touchListener(event)
+    local phase = event.phase
+
+    if phase == "began" then
+        -- Adicione o objeto à tabela de objetos tocados
+        touchedObjects[event.target] = true
+
+        -- Verifique se pelo menos dois objetos estão sendo tocados
+        local count = 0
+        for _ in pairs(touchedObjects) do
+            count = count + 1
+        end
+
+        print("Count if", count)
+        if count >= 2 then
+            -- Permita mover os objetos
+            for obj in pairs(touchedObjects) do
+                obj.markX = event.x - obj.x
+                obj.markY = event.y - obj.y
+                display.getCurrentStage():setFocus(obj, event.id)
+            end
+        end
+    elseif phase == "moved" then
+        -- Se pelo menos dois objetos estão sendo tocados, mova-os
+        local count = 0
+        for _ in pairs(touchedObjects) do
+            count = count + 1
+        end
+
+        if count >= 2 then
+            for obj in pairs(touchedObjects) do
+                if obj.markX and obj.markY then
+                    obj.x = event.x - obj.markX
+                    obj.y = event.y - obj.markY
+                else
+                    print("markX ou markY não estão definidos para o objeto.")
+                end
+            end
+        end
+    elseif phase == "ended" or phase == "cancelled" then
+        -- Remova os objetos da tabela de objetos tocados
+        for obj in pairs(touchedObjects) do
+            touchedObjects[obj] = nil
+            -- Se não há mais objetos tocados, libere o foco
+            if next(touchedObjects) == nil then
+                display.getCurrentStage():setFocus(nil)
+            end
+        end
+    end
+    return true
+end
+
+function scene:create(event)
+    local sceneGroup = self.view
+
+    -- Criar um grupo para conter os dois retângulos
+    local group = display.newGroup()
+    sceneGroup:insert(group)
+
+    -- Criar dois objetos de exibição na tela e adicioná-los ao grupo
+    local newRect1 = display.newRect(group, display.contentCenterX - 20, 240, 120, 120)
+    newRect1:setFillColor(1, 0, 0.3)
+    local newRect2 = display.newRect(group, display.contentCenterX + 100, 240, 120, 120)
+    newRect2:setFillColor(0.3, 0, 1)
+
+    -- Adicionar um ouvinte de toque a cada objeto
+    newRect1:addEventListener("touch", touchListener)
+    newRect2:addEventListener("touch", touchListener)
+end
+
+-- Não é necessário uma função "scene:show" neste exemplo
+
+-- Não é necessário uma função "scene:hide" neste exemplo
+
+-- Não é necessário uma função "scene:destroy" neste exemplo
+
+-- Escute o evento de cena
+scene:addEventListener("create", scene)
+
+return scene
