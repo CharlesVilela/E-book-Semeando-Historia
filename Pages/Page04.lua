@@ -6,6 +6,196 @@ local largura, altura = 768, 1024
 -- Definindo altura da metade da tela
 local metade_altura = altura / 2
 
+local largura_grama = largura + 800
+local largura_minima_grama = 100 -- Largura mínima que a grama pode ter
+
+
+local arado_leve
+local grama
+local boi
+local joint
+
+local physics = require("physics")
+
+local function criarChao(sceneGroup)
+    -- Crie um retângulo para representar o chão
+    local chao = display.newRect(sceneGroup, 0, altura - 90, largura + 800, 180)
+    chao:setFillColor(0.64, 0.16, 0.16)
+    chao.userData = { name = "chao" }
+
+    -- Adicione um corpo físico ao chão e torne-o estático para que os objetos não possam movê-lo
+    physics.addBody(chao, "static")
+
+    -- -- Adiciona um ouvinte de colisão ao chão
+    -- chao:addEventListener("collision", chaoCollision)
+end
+
+local function criarGrama(sceneGroup)
+    -- Crie um retângulo para representar o chão
+    grama = display.newRect(sceneGroup, 0, altura - 200, largura_grama, 40)
+    grama:setFillColor(0.2, 0.7, 0.2)
+    grama.userData = { name = "grama" }
+
+    sceneGroup:insert(grama)
+
+    -- Adicione um corpo físico ao chão e torne-o estático para que os objetos não possam movê-lo
+    physics.addBody(grama, "static")
+end
+
+local function onTouchArado(event)
+    local arado = event.target
+    local halfWidth = arado.width / 2
+
+    if event.phase == "began" then
+        display.getCurrentStage():setFocus(arado)
+        arado.touchOffsetX = event.x - arado.x
+        arado.touchOffsetY = event.y - arado.y
+    elseif event.phase == "moved" then
+        -- Calcula a nova posição do arado
+        local newX = event.x - arado.touchOffsetX
+        local newY = event.y - arado.touchOffsetY
+
+        -- Verifica se o novo X está dentro dos limites da tela
+        if newX - halfWidth >= 0 and newX + halfWidth <= largura then
+            arado.x = newX
+        end
+
+        -- Verifica se o novo Y está dentro dos limites da tela
+        if newY - halfWidth >= 0 and newY + halfWidth <= altura then
+            arado.y = newY
+        end
+    elseif event.phase == "ended" or event.phase == "cancelled" then
+        display.getCurrentStage():setFocus(nil)
+    end
+
+    return true
+end
+
+local function criarArado_leve(sceneGroup)
+    arado_leve = display.newImageRect(sceneGroup, "image/Page04/arado_leve.png", largura * 0.3, altura * 0.2)
+    arado_leve.x = largura * 0.5 + 200
+    arado_leve.y = altura - 140 - arado_leve.height * 0.4
+    physics.addBody(arado_leve, "dynamic")
+    arado_leve:addEventListener("touch", onTouchArado)
+end
+
+local function cortarGrama()
+
+    local arado_center_x = arado_leve.x
+    local grama_left = grama.x - grama.width / 2
+    local grama_right = grama.x + grama.width / 2
+        
+    if arado_center_x > grama_left and arado_center_x < grama_right then
+        local delta_x = event.x - event.xStart -- calcula o deslocamento horizontal
+        local velocidade_corte = 0.09 -- ajuste a velocidade de corte conforme necessário
+            
+        largura_grama = largura_grama - (delta_x * velocidade_corte) -- reduz a largura da grama com base no movimento horizontal
+        grama.width = largura_grama
+        grama.x = grama.x + (delta_x * velocidade_corte) -- ajusta a posição da grama para mantê-la centrada em relação ao arado
+        print("Cortando a grama...", largura_grama)
+    end
+end
+
+local function verificarProximidade()
+    print("Chamou a função Verificar Aproximidade...")
+    
+    local distanciaLimite = 300
+
+    local distanciaX = math.abs(boi.x - arado_leve.x)
+    local distanciaY = math.abs(boi.y - arado_leve.y)
+
+    print("Distância boi:", boi.x)
+    print("Distância arado:", arado_leve.x)
+    print("DistanciaX ", distanciaX)
+
+    local proximidade = distanciaX < distanciaLimite
+
+    if proximidade and not joint then
+        -- Criar uma junta entre os objetos apenas se não houver uma já criada
+        joint = physics.newJoint("weld", boi, arado_leve, boi.x, arado_leve.y)
+    elseif not proximidade and joint then
+        -- Remover a junta se não houver mais proximidade
+        joint:removeSelf()
+        joint = nil
+    end
+
+    print("Proximidade:", proximidade)
+    return proximidade
+end
+
+local function moverBoi(event)
+    local velocidade = 50
+    
+    if boi.isMovingLeft then
+        boi:setLinearVelocity(-velocidade, 0) -- Altere as coordenadas de velocidade conforme necessário
+    elseif boi.isMovingRight then
+        boi:setLinearVelocity(velocidade, 0) -- Define a velocidade como zero quando não estiver tocando no boi
+    else
+        boi:setLinearVelocity(0, 0)
+    end
+end
+
+local function onTouchBoi(event)
+    local boi = event.target
+
+    if event.phase == "began" then
+        boi.isMovingLeft = false
+        boi.isMovingRight = false
+
+        print("Chamou onTouchBoi...")
+
+        -- Determina se o toque está a esquerda ou a direita do boi
+        local touchX = event.x
+        local boiCenterX = boi.x
+        if touchX < boiCenterX then
+            boi.isMovingLeft = true
+            verificarProximidade()
+        else
+            boi.isMovingRight = true
+            local proximidade = verificarProximidade()
+            if proximidade then
+                cortarGrama()
+            end
+        end
+        print("isMovingLeft ", boi.isMovingLeft)
+        print("isMovingRight ", boi.isMovingRight)
+    elseif event.phase == "ended" or event.phase == "cancelled" then
+        boi.isMovingLeft = false
+        boi.isMovingRight = false
+    end
+    return true
+end
+
+-- local function moverBoiParaArado()
+--     local distanciaLimite = 100
+    
+--     -- Verifica se o boi está próximo o suficiente do arado
+--     if verificarProximidade() then
+--         -- Calcula a nova posição do arado
+--         local novaPosicaoX = boi.x
+--         local novaPosicaoY = boi.y
+        
+--         -- Verifica se a nova posição está dentro dos limites da tela
+--         if novaPosicaoX - arado_leve.width / 2 >= 0 and novaPosicaoX + arado_leve.width / 2 <= largura then
+--             arado_leve.x = novaPosicaoX
+--         end
+--         if novaPosicaoY - arado_leve.height / 2 >= 0 and novaPosicaoY + arado_leve.height / 2 <= altura then
+--             arado_leve.y = novaPosicaoY
+--         end
+--     end
+-- end
+
+local function criarBoi(sceneGroup)
+    boi = display.newImageRect(sceneGroup, "image/Page04/boi.png", largura * 0.3, altura * 0.2)
+    boi.x = largura * 0.5 - 200
+    boi.y = altura - 140 - arado_leve.height * 0.4
+    physics.addBody(boi, "dynamic")
+    sceneGroup:insert(boi)
+    
+    boi:addEventListener("touch", onTouchBoi)
+    Runtime:addEventListener("enterFrame", moverBoi)
+end
+
 local function onTouch(event)
     local buttonSize = largura * 0.09
     if event.phase == "ended" then
@@ -108,6 +298,14 @@ function scene:create( event )
     createTitulo(sceneGroup)
     -- createSubTitulo(sceneGroup)
 
+    physics.start()
+    physics.setGravity(0, 9.8)
+
+    criarChao(sceneGroup)
+    criarGrama(sceneGroup)
+    criarArado_leve(sceneGroup)
+    criarBoi(sceneGroup)
+
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09
     if isAudioPlaying then
@@ -149,7 +347,13 @@ function scene:show( event )
   
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-  
+        -- Verifica a proximidade entre o boi e o arado_leve
+        -- Runtime:addEventListener("enterFrame", function()
+        --     if verificarProximidade() then
+        --         print("Boi chegou no arado...")
+        --         -- moverBoiParaArado()
+        --     end
+        -- end)
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
     end
