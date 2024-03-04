@@ -206,6 +206,11 @@ Runtime:addEventListener("accelerometer", function(event)
     onAccelerate(event, peDeTrigo.x, peDeTrigo.y)
 end)
 
+local function stopAudio()
+    isAudioPlaying = false
+    buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_desligado.png", 140, 140)
+    audio.stop()
+end
 
 local function onTouch(event)
     local buttonSize = largura * 0.09
@@ -219,7 +224,7 @@ local function onTouch(event)
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
             buttonPlay = display.newImageRect(scene.view, "image/Fone/audio.png", buttonSize, buttonSize)
-            sound = audio.loadSound("audio/Page01/audioPage01.mp3")
+            sound = audio.loadSound("audio/Page02/audioPage02.mp3")
             audio.play(sound, {loops = -1})
         end
         buttonPlay.x = largura / 2
@@ -395,6 +400,7 @@ function scene:create(event)
     buttonProximaPagina.y = altura - buttonSize / 2 - 30
     buttonProximaPagina:addEventListener("touch", function(event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page03", {effect = "slideLeft", time = 500})
         end
     end)
@@ -405,6 +411,7 @@ function scene:create(event)
     buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
     buttonPaginaAnterior:addEventListener("touch", function(event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page01", {effect = "slideRight", time = 500})
         end
     end)

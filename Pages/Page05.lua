@@ -63,8 +63,6 @@ local function criarCafanhotos()
     end
 end
 
-
-
 local function exibirGafanhotosContinuamente()
     if isAfastarGafanhotos == false and trigoDevorado == false then
         criarCafanhotos()
@@ -73,7 +71,6 @@ local function exibirGafanhotosContinuamente()
         end
     end
 end
-
 
 local function removerGafanhotos()
     for i = scene.view.numChildren, 1, -1 do
@@ -240,7 +237,6 @@ end
 
 local function stopAudio()
     isAudioPlaying = false
-    buttonPlay:removeSelf()
     buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_desligado.png", 140, 140)
     audio.stop()
 end
@@ -257,7 +253,7 @@ local function onTouch(event)
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
             buttonPlay = display.newImageRect(scene.view, "image/Fone/audio.png", buttonSize, buttonSize)
-            sound = audio.loadSound("audio/Page01/audioPage01.mp3")
+            sound = audio.loadSound("audio/Page05/audioPage05.mp3")
             audio.play(sound, {loops = -1})
         end
         buttonPlay.x = largura / 2
@@ -462,6 +458,7 @@ function scene:create(event)
     buttonProximaPagina.y = altura - buttonSize / 2 - 30
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page06", {effect = "slideLeft", time = 500})
         end
     end)
@@ -472,6 +469,7 @@ function scene:create(event)
     buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
     buttonPaginaAnterior:addEventListener("touch", function (event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page04", {effect = "slideRight", time = 500})
         end
     end)

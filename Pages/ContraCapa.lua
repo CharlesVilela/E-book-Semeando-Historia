@@ -6,6 +6,12 @@ local largura, altura = 768, 1024
 -- Definindo altura da metade da tela
 local metade_altura = altura / 2
 
+local function stopAudio()
+    isAudioPlaying = false
+    buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_desligado.png", 140, 140)
+    audio.stop()
+end
+
 local function onTouch(event)
     local buttonSize = largura * 0.09
     if event.phase == "ended" then
@@ -127,6 +133,7 @@ function scene:create( event )
     buttonProximaPagina.y = altura - buttonSize / 2 - 30
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Capa", {effect = "slideLeft", time = 500})
         end
     end)
@@ -137,6 +144,7 @@ function scene:create( event )
     buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
     buttonPaginaAnterior:addEventListener("touch", function (event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page06", {effect = "slideRight", time = 500})
         end
     end)

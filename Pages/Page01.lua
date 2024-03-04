@@ -199,7 +199,6 @@ end
 local function gameLoop(event)
     moverNomades()
 end
-
 -- Adicionando listeners
 -- Runtime:addEventListener("touch", toqueListener)
 Runtime:addEventListener("enterFrame", gameLoop)
@@ -264,6 +263,12 @@ end
 local function createTexto(sceneGroup)
     texto = "Nos primórdios, as pessoas eram predominantemente nômades. E a agricultura marcou o começo do sedentarismo humano, diretamente ligado às primeiras civilizações. Antes, para sobreviver, as pessoas se alimentavam caçando, coletando frutos e plantas."
     criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 200, largura - 40, 500, native.newFont("Bold"), 30, 55)
+end
+
+local function stopAudio()
+    isAudioPlaying = false
+    buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_desligado.png", 140, 140)
+    audio.stop()
 end
 
 -- Player no audio
@@ -371,6 +376,7 @@ function scene:create(event)
     buttonProximaPagina.y = altura - buttonSize / 2 - 30
     buttonProximaPagina:addEventListener("touch", function(event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page02", {effect = "slideLeft", time = 500})
         end
     end)
@@ -381,6 +387,7 @@ function scene:create(event)
     buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
     buttonPaginaAnterior:addEventListener("touch", function(event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Capa", {effect = "slideRight", time = 500})
         end
     end)

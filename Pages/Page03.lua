@@ -28,7 +28,7 @@ local limiteEsquerdo = 100
 local limiteDireito = largura - 100
 -- Limites em Y
 local limiteSuperior = 100
-local limiteInferior = altura - 320  -- Ajuste conforme necessário
+local limiteInferior = altura - 300  -- Ajuste conforme necessário
 local mySceneGroup
 local nomade
 
@@ -141,18 +141,15 @@ local function touchListener(event)
             count = count + 1
         end
 
-        print(count)
-
         -- Verificar se este evento de toque está relacionado a um dos toques ativos
         local isMultiTouch = false
-
         if count == 2 then
             isMultiTouch = true
         end
 
         print(isMultiTouch)
 
-        if true then
+        if isMultiTouch then
             display.getCurrentStage():setFocus(target, event.id)
             target.isFocus = true
 
@@ -205,6 +202,12 @@ local function touchListener(event)
     return true
 end
 
+local function stopAudio()
+    isAudioPlaying = false
+    buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_desligado.png", 140, 140)
+    audio.stop()
+end
+
 -- Player no audio
 local function onTouch(event)
     local buttonSize = largura * 0.09
@@ -218,7 +221,7 @@ local function onTouch(event)
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
             buttonPlay = display.newImageRect(scene.view, "image/Fone/audio.png", buttonSize, buttonSize)
-            sound = audio.loadSound("audio/Page01/audioPage01.mp3")
+            sound = audio.loadSound("audio/Page03/audioPage03.mp3")
             audio.play(sound, {loops = -1})
         end
         buttonPlay.x = largura / 2
@@ -386,7 +389,8 @@ function scene:create(event)
   buttonProximaPagina.y = altura - buttonSize / 2 - 30
   buttonProximaPagina:addEventListener("touch", function(event)
       if event.phase == "ended" then
-          composer.gotoScene("Pages.Page04", {effect = "slideLeft", time = 500})
+        stopAudio()
+        composer.gotoScene("Pages.Page04", {effect = "slideLeft", time = 500})
       end
   end)
   adicionarTextoBotaoProximaPagina(sceneGroup)
@@ -396,7 +400,8 @@ function scene:create(event)
   buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
   buttonPaginaAnterior:addEventListener("touch", function(event)
       if event.phase == "ended" then
-          composer.gotoScene("Pages.Page02", {effect = "slideRight", time = 500})
+        stopAudio()
+        composer.gotoScene("Pages.Page02", {effect = "slideRight", time = 500})
       end
   end)
   adicionarTextoBotaoPaginaAnterior(sceneGroup)

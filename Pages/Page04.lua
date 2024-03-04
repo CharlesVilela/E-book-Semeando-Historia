@@ -9,11 +9,19 @@ local metade_altura = altura / 2
 local largura_grama = largura + 800
 local largura_minima_grama = 100 -- Largura mínima que a grama pode ter
 
-
+local mySceneGroup
 local arado_leve
 local grama
 local boi
 local joint
+local imagem_boi
+local boiJoinDefined = false
+local criouNovoBoi = false
+local novoBoi
+local balaoTextoArado
+local balaoTextoBoi
+
+local funcaoMoverBoi
 
 local physics = require("physics")
 
@@ -42,11 +50,81 @@ local function criarGrama(sceneGroup)
     physics.addBody(grama, "static")
 end
 
+local function exibirBalaoTextoArado()
+    -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+    -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+    balaoTextoArado = display.newText({
+        text = "Arado leve",
+        x = arado_leve.x - 150, 
+        y= arado_leve.y - arado_leve.height * 0.4,
+        font = native.systemFont,
+        fontSize = 30
+    })
+    balaoTextoArado:setFillColor(1, 0, 0)
+    mySceneGroup:insert(balaoTextoArado)
+end
+
+local function esconderBalaoArado()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTextoArado then
+        balaoTextoArado:removeSelf()
+        balaoTextoArado = nil
+    end
+end
+
+local function exibirBalaoTextoBoi()
+    -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+    -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+    balaoTextoBoi = display.newText({
+        text = "Toque no boi. \n Leve-o para Arador",
+        x = boi.x + 200, 
+        y= boi.y - boi.height * 0.4,
+        font = native.systemFont,
+        fontSize = 30
+    })
+    balaoTextoBoi:setFillColor(1, 0, 0)
+    mySceneGroup:insert(balaoTextoBoi)
+end
+
+local function esconderBalaoBoi()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTextoBoi then
+        balaoTextoBoi:removeSelf()
+        balaoTextoBoi = nil
+    end
+end
+
+local function exibirBalaoTextoNovoBoi()
+    -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+    -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+    balaoTextoBoi = display.newText({
+        text = "Toque no boi. \n Para arar a terra",
+        x = boi.x - 300, 
+        y= boi.y - boi.height * 0.4,
+        font = native.systemFont,
+        fontSize = 30
+    })
+    balaoTextoBoi:setFillColor(1, 0, 0)
+    mySceneGroup:insert(balaoTextoBoi)
+end
+
+local function esconderBalaoNovoBoi()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTextoBoi then
+        balaoTextoBoi:removeSelf()
+        balaoTextoBoi = nil
+    end
+end
+
 local function onTouchArado(event)
     local arado = event.target
     local halfWidth = arado.width / 2
 
     if event.phase == "began" then
+        esconderBalaoArado()
         display.getCurrentStage():setFocus(arado)
         arado.touchOffsetX = event.x - arado.x
         arado.touchOffsetY = event.y - arado.y
@@ -72,9 +150,10 @@ local function onTouchArado(event)
 end
 
 local function criarArado_leve(sceneGroup)
-    arado_leve = display.newImageRect(sceneGroup, "image/Page04/arado_leve.png", largura * 0.3, altura * 0.2)
-    arado_leve.x = largura * 0.5 + 200
+    arado_leve = display.newImageRect(sceneGroup, "image/Page04/arado_leve.png", largura * 0.2, altura * 0.2)
+    arado_leve.x = largura * 0.5 + 280
     arado_leve.y = altura - 140 - arado_leve.height * 0.4
+    exibirBalaoTextoArado()
     physics.addBody(arado_leve, "dynamic")
     arado_leve:addEventListener("touch", onTouchArado)
 end
@@ -86,7 +165,7 @@ local function cortarGrama()
     local grama_right = grama.x + grama.width / 2
         
     if arado_center_x > grama_left and arado_center_x < grama_right then
-        local delta_x = event.x - event.xStart -- calcula o deslocamento horizontal
+        local delta_x = novoBoi.x - arado_leve.x -- calcula o deslocamento horizontal entre o boi e o arado
         local velocidade_corte = 0.09 -- ajuste a velocidade de corte conforme necessário
             
         largura_grama = largura_grama - (delta_x * velocidade_corte) -- reduz a largura da grama com base no movimento horizontal
@@ -96,36 +175,55 @@ local function cortarGrama()
     end
 end
 
-local function verificarProximidade()
-    print("Chamou a função Verificar Aproximidade...")
-    
-    local distanciaLimite = 300
+local function moverNovoBoi(event)
+    local velocidade = 50
 
-    local distanciaX = math.abs(boi.x - arado_leve.x)
-    local distanciaY = math.abs(boi.y - arado_leve.y)
+    if novoBoi.isMovingLeft then
+        novoBoi:setLinearVelocity(-velocidade, 0) -- Altere as coordenadas de velocidade conforme necessário
+        cortarGrama()
+    elseif novoBoi.isMovingRight then
+        novoBoi:setLinearVelocity(velocidade, 0) -- Define a velocidade como zero quando não estiver tocando no boi
+    else
+        novoBoi:setLinearVelocity(0, 0)
+    end
+end
 
-    print("Distância boi:", boi.x)
-    print("Distância arado:", arado_leve.x)
-    print("DistanciaX ", distanciaX)
+local function onTouchNovoBoi(event)
+    local novoBoi = event.target
 
-    local proximidade = distanciaX < distanciaLimite
+    if event.phase == "began" then
+        esconderBalaoNovoBoi()
+        novoBoi.isMovingLeft = false
+        novoBoi.isMovingRight = false
 
-    if proximidade and not joint then
-        -- Criar uma junta entre os objetos apenas se não houver uma já criada
-        joint = physics.newJoint("weld", boi, arado_leve, boi.x, arado_leve.y)
-    elseif not proximidade and joint then
-        -- Remover a junta se não houver mais proximidade
-        joint:removeSelf()
-        joint = nil
+        -- Determina se o toque está a esquerda ou a direita do boi
+        local touchX = event.x
+        local boiCenterX = novoBoi.x
+        if touchX < boiCenterX then
+            novoBoi.isMovingLeft = true
+            -- verificarProximidadeNovoBoi()
+        else
+            novoBoi.isMovingRight = true
+            -- verificarProximidade()
+        end        
+    elseif event.phase == "ended" or event.phase == "cancelled" then
+        novoBoi.isMovingLeft = false
+        novoBoi.isMovingRight = false
     end
 
-    print("Proximidade:", proximidade)
-    return proximidade
+    -- Verifica se o boi está dentro dos limites da tela ao longo do eixo X
+    local limiteEsquerdo = novoBoi.width / 2
+    local limiteDireito = largura - novoBoi.width / 2
+    if novoBoi.x < limiteEsquerdo then
+        novoBoi.x = limiteEsquerdo
+    elseif novoBoi.x > limiteDireito then
+        novoBoi.x = limiteDireito
+    end
+    return true
 end
 
 local function moverBoi(event)
     local velocidade = 50
-    
     if boi.isMovingLeft then
         boi:setLinearVelocity(-velocidade, 0) -- Altere as coordenadas de velocidade conforme necessário
     elseif boi.isMovingRight then
@@ -135,14 +233,44 @@ local function moverBoi(event)
     end
 end
 
+local function criarNovoBoi()
+    Runtime:removeEventListener("enterFrame", moverBoi)
+    boi:removeSelf()
+    imagem_boi = "image/Page04/boi_esquerda.png"
+    novoBoi = display.newImageRect(mySceneGroup, imagem_boi, largura * 0.2, altura * 0.2) -- Cria uma nova imagem do boi
+    print(imagem_boi)
+    novoBoi.x = largura * 0.7 -- Ajusta a posição conforme necessário
+    novoBoi.y = altura - 140 - arado_leve.height * 0.9
+    physics.addBody(novoBoi, "dynamic")
+    mySceneGroup:insert(novoBoi)
+    exibirBalaoTextoNovoBoi()
+    novoBoi:addEventListener("touch", onTouchNovoBoi)
+    Runtime:addEventListener("enterFrame", moverNovoBoi)
+end
+
+local function verificarProximidade()    
+    local distanciaLimite = 300
+
+    local distanciaX = math.abs(boi.x - arado_leve.x)
+    local distanciaY = math.abs(boi.y - arado_leve.y)
+    local proximidade = distanciaX < distanciaLimite
+
+    if proximidade and not joint then
+        boiJoinDefined = true
+        criarNovoBoi()
+        -- Criar uma junta entre os objetos apenas se não houver uma já criada
+        joint = physics.newJoint("weld", novoBoi, arado_leve, boi.x, arado_leve.y)
+    end
+    return proximidade
+end
+
 local function onTouchBoi(event)
     local boi = event.target
 
     if event.phase == "began" then
+        esconderBalaoBoi()
         boi.isMovingLeft = false
         boi.isMovingRight = false
-
-        print("Chamou onTouchBoi...")
 
         -- Determina se o toque está a esquerda ou a direita do boi
         local touchX = event.x
@@ -152,48 +280,47 @@ local function onTouchBoi(event)
             verificarProximidade()
         else
             boi.isMovingRight = true
-            local proximidade = verificarProximidade()
-            if proximidade then
-                cortarGrama()
-            end
-        end
-        print("isMovingLeft ", boi.isMovingLeft)
-        print("isMovingRight ", boi.isMovingRight)
+            verificarProximidade()
+        end        
     elseif event.phase == "ended" or event.phase == "cancelled" then
         boi.isMovingLeft = false
         boi.isMovingRight = false
     end
+
+    -- Verifica se o boi está dentro dos limites da tela ao longo do eixo X
+    local limiteEsquerdo = boi.width / 2
+    local limiteDireito = largura - boi.width / 2
+    if boi.x < limiteEsquerdo then
+        boi.x = limiteEsquerdo
+    elseif boi.x > limiteDireito then
+        boi.x = limiteDireito
+    end
+
+    if criouNovoBoi then
+        print("Criou novo boi ", criouNovoBoi)
+        boi:addEventListener("touch", onTouchBoi)
+        Runtime:addEventListener("enterFrame", moverBoi)
+    end
+    print("Criou novo boi ", criouNovoBoi)
     return true
 end
 
--- local function moverBoiParaArado()
---     local distanciaLimite = 100
-    
---     -- Verifica se o boi está próximo o suficiente do arado
---     if verificarProximidade() then
---         -- Calcula a nova posição do arado
---         local novaPosicaoX = boi.x
---         local novaPosicaoY = boi.y
-        
---         -- Verifica se a nova posição está dentro dos limites da tela
---         if novaPosicaoX - arado_leve.width / 2 >= 0 and novaPosicaoX + arado_leve.width / 2 <= largura then
---             arado_leve.x = novaPosicaoX
---         end
---         if novaPosicaoY - arado_leve.height / 2 >= 0 and novaPosicaoY + arado_leve.height / 2 <= altura then
---             arado_leve.y = novaPosicaoY
---         end
---     end
--- end
-
 local function criarBoi(sceneGroup)
-    boi = display.newImageRect(sceneGroup, "image/Page04/boi.png", largura * 0.3, altura * 0.2)
+    boi = display.newImageRect(sceneGroup, imagem_boi, largura * 0.2, altura * 0.2)
     boi.x = largura * 0.5 - 200
-    boi.y = altura - 140 - arado_leve.height * 0.4
+    boi.y = altura - 140 - arado_leve.height * 0.9
     physics.addBody(boi, "dynamic")
     sceneGroup:insert(boi)
+    exibirBalaoTextoBoi()
     
     boi:addEventListener("touch", onTouchBoi)
     Runtime:addEventListener("enterFrame", moverBoi)
+end
+
+local function stopAudio()
+    isAudioPlaying = false
+    buttonPlay = display.newImageRect(scene.view, "image/Fone/audio_desligado.png", 140, 140)
+    audio.stop()
 end
 
 local function onTouch(event)
@@ -208,7 +335,7 @@ local function onTouch(event)
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
             buttonPlay = display.newImageRect(scene.view, "image/Fone/audio.png", buttonSize, buttonSize)
-            sound = audio.loadSound("audio/Page01/audioPage01.mp3")
+            sound = audio.loadSound("audio/Page04/audioPage04.mp3")
             audio.play(sound, {loops = -1})
         end
         buttonPlay.x = largura / 2
@@ -219,26 +346,60 @@ end
 
 local function createTitulo(sceneGroup)
     local titulo = display.newText({
-        text = "Page 04",
+        text = "Desenvolvimento de Ferramentas",
         font = native.newFont("Bold"),
-        fontSize = largura * 0.1  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
+        fontSize = 40  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.3
+    titulo.y = altura * 0.07
     titulo:setFillColor(1, 1, 1)
     sceneGroup:insert(titulo)
 end
 
-local function createSubTitulo(sceneGroup)
-    local subtitulo = display.newText({
-        text = "Autor: Charles Vilela de Souza \n Ano: 2024",
-        font = native.newFont("Bold"),
-        fontSize = largura * 0.05  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
-    })
-    subtitulo.x = largura * 0.5
-    subtitulo.y = altura * 0.45
-    subtitulo:setFillColor(1, 1, 1)
-    sceneGroup:insert(subtitulo)
+local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font, fontSize, lineHeight)
+    local words = {}
+    for word in text:gmatch("%S+") do
+        table.insert(words, word)
+    end
+
+    local lines = {}
+    local line = ""
+    local lineWidth = 0
+    local spaceWidth = fontSize * 0.3 -- Estimativa da largura do espaço entre palavras
+
+    for i, word in ipairs(words) do
+        local wordWidth = string.len(word) * (fontSize * 0.5) -- Estimativa da largura da palavra
+
+        if lineWidth + wordWidth < width then
+            line = line .. " " .. word
+            lineWidth = lineWidth + wordWidth + spaceWidth
+        else
+            table.insert(lines, line)
+            line = word
+            lineWidth = wordWidth
+        end
+    end
+    table.insert(lines, line)
+
+    for i, line in ipairs(lines) do
+        local texto = display.newText({
+            text = line,
+            x = x,
+            y = y + (i - 1) * lineHeight,
+            width = width,
+            font = font,
+            fontSize = fontSize,
+            align = "justify"
+        })
+        texto:setFillColor(1, 1, 1)
+        sceneGroup:insert(texto)
+    end
+end
+
+-- Função para criar o texto
+local function createTexto(sceneGroup)
+    texto = "Durante a revolução agrícola, o desenvolvimento de ferramentas específicas foi crucial para avanços na agricultura. No sistema de Cultivo Temporário de Derrubada e Queimada, machados, foices e ferramentas para queima controlada preparavam a terra. No sistema de Alqueive e Tração Leve, arados leves e instrumentos de aração facilitavam o plantio intensivo. Em sistemas de Alqueive e Tração Pesada, arados pesados e instrumentos de tração animal robustos lidavam com áreas maiores e solos difíceis. Essas ferramentas otimizaram processos agrícolas e aumentaram a produtividade."
+    criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 130, largura - 60, 100, native.newFont("Bold"), 30, 35)
 end
 
 local function adicionarTextoBotaoAudio(sceneGroup)
@@ -289,6 +450,7 @@ end
 -- create()
 function scene:create( event )
     local sceneGroup = self.view
+    mySceneGroup = sceneGroup
     -- Adicionar um retângulo azul para simular o céu
     local ceu = display.newRect(sceneGroup, 0, 0, largura, altura)
     ceu.anchorX = 0
@@ -296,10 +458,12 @@ function scene:create( event )
     ceu:setFillColor(0.53, 0.81, 0.98) -- Cor azul do céu
 
     createTitulo(sceneGroup)
-    -- createSubTitulo(sceneGroup)
+    createTexto(sceneGroup)
 
     physics.start()
     physics.setGravity(0, 9.8)
+
+    imagem_boi = "image/Page04/boi_direita.png"
 
     criarChao(sceneGroup)
     criarGrama(sceneGroup)
@@ -325,6 +489,7 @@ function scene:create( event )
     buttonProximaPagina.y = altura - buttonSize / 2 - 30
     buttonProximaPagina:addEventListener("touch", function (event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page05", {effect = "slideLeft", time = 500})
         end
     end)
@@ -335,10 +500,18 @@ function scene:create( event )
     buttonPaginaAnterior.y = altura - buttonSize / 2 - 30
     buttonPaginaAnterior:addEventListener("touch", function (event)
         if event.phase == "ended" then
+            stopAudio()
             composer.gotoScene("Pages.Page03", {effect = "slideRight", time = 500})
         end
     end)
     adicionarTextoBotaoPaginaAnterior(sceneGroup)
+
+    print("Verifica boiJoinDefined em create")
+    if boiJoinDefined then
+
+        criarNovoBoi()
+    end
+
 end 
   
 function scene:show( event )
@@ -346,14 +519,10 @@ function scene:show( event )
     local phase = event.phase
   
     if ( phase == "will" ) then
-        -- Code here runs when the scene is still off screen (but is about to come on screen)
-        -- Verifica a proximidade entre o boi e o arado_leve
-        -- Runtime:addEventListener("enterFrame", function()
-        --     if verificarProximidade() then
-        --         print("Boi chegou no arado...")
-        --         -- moverBoiParaArado()
-        --     end
-        -- end)
+        print("Verifica boiJoinDefined em show")
+        if boiJoinDefined then
+            criarNovoBoi()
+        end
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
     end
