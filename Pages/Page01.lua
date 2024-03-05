@@ -317,6 +317,13 @@ local function createTexto(sceneGroup)
     criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 200, largura - 40, 500, native.newFont("Bold"), 30, 55)
 end
 
+function scene:recriarElementos()
+    limparNomades() -- Limpar os nomades ao recriar
+    limparRecursos() -- Limpar os recursos ao recriar
+    criarNomades() -- Recriar os nomades
+    criarRecursos() -- Recriar os recursos
+end
+
 function scene:create(event)
     local sceneGroup = self.view
     mySceneGroup = sceneGroup
@@ -331,19 +338,19 @@ function scene:create(event)
     background.x = 0
     background.y = altura
 
+    createTitulo(sceneGroup)
+    createTexto(sceneGroup)
+
     local buttonSize = largura * 0.09
     if isAudioPlaying then
-        buttonPlay = display.newImageRect(sceneGroup, "image/Fone/audio.png", buttonSize, buttonSize)
+        buttonPlay = display.newImageRect(mySceneGroup, "image/Fone/audio.png", buttonSize, buttonSize)
     else
-        buttonPlay = display.newImageRect(sceneGroup, "image/Fone/no_audio.png", buttonSize * 0.8, buttonSize * 0.8)
+        buttonPlay = display.newImageRect(mySceneGroup, "image/Fone/no_audio.png", buttonSize * 0.8, buttonSize * 0.8)
     end
     buttonPlay.x = largura / 2
     buttonPlay.y = altura * 0.195 + 750
     buttonPlay:addEventListener("touch", onTouch)
     adicionarTextoBotaoAudio(sceneGroup)
-
-    createTitulo(sceneGroup)
-    createTexto(sceneGroup)
 
     local buttonProximaPagina = display.newImageRect(scene.view, "image/Buttons/proxima_pagina.png", buttonSize, buttonSize)
     buttonProximaPagina.x = largura - buttonSize / 2 - 40
@@ -374,6 +381,7 @@ end
 function scene:show(event)
     local phase = event.phase
     if phase == "will" then
+        self:recriarElementos() -- Recriar elementos quando a cena estiver prestes a ser exibida
         Runtime:addEventListener("enterFrame", moverNomades)
     elseif phase == "did" then
         -- Code here runs when the scene is entirely on screen
