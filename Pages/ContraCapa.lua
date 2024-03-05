@@ -40,8 +40,8 @@ local function createAutor(sceneGroup)
         fontSize = 40  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.44
-    titulo:setFillColor(1, 1, 1)
+    titulo.y = altura * 0.40
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
@@ -52,8 +52,8 @@ local function createAno(sceneGroup)
         fontSize = 40
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.35
-    titulo:setFillColor(1, 1, 1)
+    titulo.y = altura * 0.30
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
@@ -64,8 +64,8 @@ local function createOrientador(sceneGroup)
         fontSize = 40
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.54
-    titulo:setFillColor(1, 1, 1)
+    titulo.y = altura * 0.50
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
@@ -76,20 +76,20 @@ local function createDisciplina(sceneGroup)
         fontSize = 40  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.25
-    titulo:setFillColor(1, 1, 1)
+    titulo.y = altura * 0.20
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
 local function createTitulo(sceneGroup)
     local titulo = display.newText({
-        text = "Semeando Historia",
+        text = "Titulo: Semeando Historia",
         font = native.newFont("Bold"),
-        fontSize = 60  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
+        fontSize = 40  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     titulo.x = largura * 0.5
     titulo.y = altura * 0.1
-    titulo:setFillColor(1, 1, 1)
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
@@ -97,13 +97,13 @@ local function adicionarTextoBotaoAudio(sceneGroup)
     local textoBotaoAudio = display.newText({
         text = "Audio Ligar/Desligar",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
     textoBotaoAudio.x = largura / 2
     textoBotaoAudio.y = altura - textoBotaoAudio.height / 2 - 10
     -- Define a cor do titulo
-    textoBotaoAudio:setFillColor(1, 1, 1)
+    textoBotaoAudio:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoAudio)
 end
@@ -118,7 +118,7 @@ local function adicionarTextoBotaoProximaPagina(sceneGroup)
     textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 170
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoProximaPagina:setFillColor(1, 0.7, 0)
+    textoBotaoProximaPagina:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoProximaPagina)
 end
@@ -127,13 +127,13 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
     local textoBotaoPaginaAnterior = display.newText({
         text = "Página Anterior",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 540
+    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 520
     textoBotaoPaginaAnterior.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoPaginaAnterior:setFillColor(1, 1, 1)
+    textoBotaoPaginaAnterior:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoPaginaAnterior)
 end
@@ -146,6 +146,13 @@ function scene:create( event )
     ceu.anchorX = 0
     ceu.anchorY = 0
     ceu:setFillColor(0.53, 0.81, 0.98) -- Cor azul do céu
+
+    -- ADICIONAR O BACKGROUND NA TELA. AREA DA PAISAGEM
+    local background = display.newImageRect(sceneGroup, "image/Page01/background.png", largura, altura * 0.7)
+    background.anchorX = 0
+    background.anchorY = 1
+    background.x = 0
+    background.y = altura
 
     createTitulo(sceneGroup)
     createDisciplina(sceneGroup)

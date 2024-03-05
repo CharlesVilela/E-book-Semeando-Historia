@@ -35,6 +35,7 @@ local fases_trigo = {
 
 local isValide = true
 local timers = {}
+local balaoTexto
 
 -- local function verificarSobreposicao(x, largura, casasCriadas)
 --     for i, casa in ipairs(casasCriadas) do
@@ -44,6 +45,29 @@ local timers = {}
 --     end
 --     return false
 -- end
+
+local function exibirBalaoTexto()
+    -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+    -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+    balaoTexto = display.newText({
+        text = "Espere o trigo ficar maduro \n para colhe-lo e aumentar \n a população",
+        x = 450, 
+        y= 450,
+        font = native.systemFont,
+        fontSize = 30
+    })
+    balaoTexto:setFillColor(1, 0, 0)
+    mySceneGroup:insert(balaoTexto)
+end
+
+local function esconderBalaoTexto()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTexto then
+        balaoTexto:removeSelf()
+        balaoTexto = nil
+    end
+end
 
 local function criarCasas(sceneGroup)
     print("Chamou para criar casas...")
@@ -190,6 +214,8 @@ local function iniciarCrescimento(mySceneGroup)
                     sementes[sementeClicada] = nil
                     local colhidos = true
                     count_colhidos = count_colhidos + 1
+                    esconderBalaoTexto()
+                    
                     
                     for key, _ in pairs(sementes) do
                         if not sementes[key].maduro then
@@ -219,7 +245,6 @@ local function iniciarCrescimento(mySceneGroup)
         end
     end
 end
-
 
 local function onTouch(event)
     local buttonSize = largura * 0.09
@@ -277,7 +302,7 @@ local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font
             fontSize = fontSize,
             align = "justify"
         })
-        texto:setFillColor(1, 1, 1)
+        texto:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
         sceneGroup:insert(texto)
     end
 end
@@ -293,7 +318,7 @@ local function createTitulo(sceneGroup)
     titulo.x = display.contentCenterX
     titulo.y = altura * 0.293 - 200
     -- Define a cor do titulo
-    titulo:setFillColor(1, 1, 1)
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(titulo)
 end
@@ -308,13 +333,13 @@ local function adicionarTextoBotaoAudio(sceneGroup)
     local textoBotaoAudio = display.newText({
         text = "Audio Ligar/Desligar",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
     textoBotaoAudio.x = largura / 2
     textoBotaoAudio.y = altura - textoBotaoAudio.height / 2 - 10
     -- Define a cor do titulo
-    textoBotaoAudio:setFillColor(1, 1, 1)
+    textoBotaoAudio:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoAudio)
 end
@@ -323,13 +348,13 @@ local function adicionarTextoBotaoProximaPagina(sceneGroup)
     local textoBotaoProximaPagina = display.newText({
         text = "Próxima Página",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 130
+    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 150
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoProximaPagina:setFillColor(1, 1, 1)
+    textoBotaoProximaPagina:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoProximaPagina)
 end
@@ -338,13 +363,13 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
     local textoBotaoPaginaAnterior = display.newText({
         text = "Página Anterior",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 540
+    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 520
     textoBotaoPaginaAnterior.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoPaginaAnterior:setFillColor(1, 1, 1)
+    textoBotaoPaginaAnterior:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoPaginaAnterior)
 end
@@ -375,6 +400,8 @@ function scene:create(event)
 
     createTitulo(sceneGroup)
     createTexto(sceneGroup)
+
+    exibirBalaoTexto()
 
     -- Iniciar o crescimento do trigo
     iniciarCrescimento(sceneGroup)

@@ -19,56 +19,27 @@ local isCriadoObjetoNovo = false
 local trigo
 local balaoTexto
 
--- local balaoTextoEnxofre
--- local balaoTextoTocha
+local balaoTextoEnxofre
+local balaoTextoTocha
 -- local mySceneGroup
 
--- local function exibirBalaoTextoEnxofre()
---     -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
---     -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
---     balaoTexto = display.newText({
---         text = "Enxofre",
---         x = 400, 
---         y= altura * 0.55,
---         font = native.systemFont,
---         fontSize = 30
---     })
---     balaoTexto:setFillColor(1, 0, 0)
---     mySceneGroup:insert(balaoTexto)
--- end
+local function esconderBalaoEnxofre()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTextoEnxofre then
+        balaoTextoEnxofre:removeSelf()
+        balaoTextoEnxofre = nil
+    end
+end
 
--- local function esconderBalaoEnxofre()
---     print("Chamou remover Balao")
---     -- Remover o balão da cena
---     if balaoTextoEnxofre then
---         balaoTextoEnxofre:removeSelf()
---         balaoTextoEnxofre = nil
---     end
--- end
-
--- local function exibirBalaoTextoTocha()
---     -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
---     -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
---     balaoTextoTocha = display.newText({
---         text = "Tocha",
---         x = 600, 
---         y= altura * 0.55,
---         font = native.systemFont,
---         fontSize = 30
---     })
---     balaoTextoTocha:setFillColor(1, 0, 0)
---     mySceneGroup:insert(balaoTextoTocha)
--- end
-
--- local function esconderBalaoTocha()
---     print("Chamou remover Balao")
---     -- Remover o balão da cena
---     if balaoTextoTocha then
---         balaoTextoTocha:removeSelf()
---         balaoTextoTocha = nil
---     end
--- end
-
+local function esconderBalaoTocha()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTextoTocha then
+        balaoTextoTocha:removeSelf()
+        balaoTextoTocha = nil
+    end
+end
 
 local function criarCafanhotos()
     if not trigoDevorado and gerarGafanhotos then
@@ -224,6 +195,8 @@ local function toque(event, sceneGroup, objeto)
         target.markX = target.x
         target.markY = target.y
         atualizarTextoBalao(objeto, balaoTexto)
+        esconderBalaoEnxofre()
+        esconderBalaoTocha()
     elseif target.isFocus then
         if event.phase == "moved" then
             target.x = event.x - event.xStart + target.markX
@@ -241,7 +214,7 @@ local function toque(event, sceneGroup, objeto)
 
                 local halfScreenHeight = display.contentHeight / 2
                 novoObjeto = display.newImageRect(sceneGroup, "image/Page05/pote.png", 100, 100)
-                novoObjeto.x = 100
+                novoObjeto.x = 85
                 novoObjeto.y = halfScreenHeight * 1.2
 
                 local imagemAcompanhante = display.newImageRect(sceneGroup, "image/Page05/fumaca.png", 200, 200)
@@ -349,7 +322,7 @@ local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font
             fontSize = fontSize,
             align = "justify"
         })
-        texto:setFillColor(1, 1, 1)
+        texto:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
         sceneGroup:insert(texto)
     end
 end
@@ -365,7 +338,7 @@ local function createTitulo(sceneGroup)
     titulo.x = display.contentCenterX
     titulo.y = altura * 0.293 - 200
     -- Define a cor do titulo
-    titulo:setFillColor(1, 1, 1)
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(titulo)
 end
@@ -380,13 +353,13 @@ local function adicionarTextoBotaoAudio(sceneGroup)
     local textoBotaoAudio = display.newText({
         text = "Audio Ligar/Desligar",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
     textoBotaoAudio.x = largura / 2
     textoBotaoAudio.y = altura - textoBotaoAudio.height / 2 - 10
     -- Define a cor do titulo
-    textoBotaoAudio:setFillColor(1, 1, 1)
+    textoBotaoAudio:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoAudio)
 end
@@ -395,13 +368,13 @@ local function adicionarTextoBotaoProximaPagina(sceneGroup)
     local textoBotaoProximaPagina = display.newText({
         text = "Próxima Página",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 130
+    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 150
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoProximaPagina:setFillColor(1, 1, 1)
+    textoBotaoProximaPagina:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoProximaPagina)
 end
@@ -410,17 +383,16 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
     local textoBotaoPaginaAnterior = display.newText({
         text = "Página Anterior",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 540
+    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 520
     textoBotaoPaginaAnterior.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoPaginaAnterior:setFillColor(1, 1, 1)
+    textoBotaoPaginaAnterior:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoPaginaAnterior)
 end
-
 
 function scene:create(event)
     local sceneGroup = self.view
@@ -447,18 +419,18 @@ function scene:create(event)
     -- AREA CRIAR OS TRÊS OBJETOS DE ARRASTAR NA TELA
     objeto1 = display.newImageRect(sceneGroup, "image/Page05/pote.png", 100, 100)
     objeto1.x = 200
-    objeto1.y = halfScreenHeight * 1.2
+    objeto1.y = halfScreenHeight * 1.3
     objeto1:addEventListener("touch", function(event) toque(event, sceneGroup, objeto1) end)
 
     balaoTexto = display.newText({
         parent = sceneGroup,
         text = "Arraste os itens para dentro de mim",
         x = objeto1.x + 20,
-        y = objeto1.y - 70,
+        y = objeto1.y - 90,
         width = 170,
         height = 0,
         font = native.newFont("Bold"),
-        fontSize = 16
+        fontSize = 20
     })
     balaoTexto:setFillColor(1, 0, 0)
 
@@ -482,12 +454,37 @@ function scene:create(event)
     objeto2 = display.newImageRect(sceneGroup, "image/Page05/enxofre.png", 100, 100)
     objeto2.x = 400
     objeto2.y = halfScreenHeight * 1.2
+
+    balaoTextoEnxofre = display.newText({
+        parent = sceneGroup,
+        text = "Exofre",
+        x = objeto2.x + 60,
+        y = objeto2.y - 60,
+        width = 170,
+        height = 0,
+        font = native.newFont("Bold"),
+        fontSize = 20
+    })
+    balaoTextoEnxofre:setFillColor(1, 0, 0)
     objeto2:addEventListener("touch", function(event) toque(event, sceneGroup, objeto1) end)
 
     objeto3 = display.newImageRect(sceneGroup, "image/Page05/tocha.png", 100, 100)
     objeto3.x = 600
     objeto3.y = halfScreenHeight * 1.2
+
+    balaoTextoTocha = display.newText({
+        parent = sceneGroup,
+        text = "Tocha",
+        x = objeto3.x + 60,
+        y = objeto3.y - 60,
+        width = 170,
+        height = 0,
+        font = native.newFont("Bold"),
+        fontSize = 20
+    })
+    balaoTextoTocha:setFillColor(1, 0, 0)
     objeto3:addEventListener("touch", function(event) toque(event, sceneGroup, objeto1) end)
+
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09

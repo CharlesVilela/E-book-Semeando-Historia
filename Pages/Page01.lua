@@ -5,7 +5,7 @@ local largura, altura = 768, 1024
 local tamanho_celula = largura * 0.026
 local nomades = {}
 local recursos = {}
-local num_recursos = 5
+local num_recursos = 10
 local recursos_coletados = 0
 local busca_iniciada = false
 local balaoTexto
@@ -42,8 +42,31 @@ local function nomadeTouchHandler(event)
     end
     -- Adicionei a lógica de movimento aqui
     if busca_iniciada then
-        nomade.x = event.x
-        nomade.y = event.y
+        
+        -- Limitando o movimento no eixo X
+        local limiteEsquerdo = nomade.width / 2 - 60
+        local limiteDireito = display.contentWidth - nomade.width / 2 + 60
+        -- Limitando o movimento no eixo X dentro dos limites definidos
+        if event.x < limiteEsquerdo then
+            nomade.x = limiteEsquerdo
+        elseif event.x > limiteDireito then
+            nomade.x = limiteDireito
+        else
+            nomade.x = event.x
+        end
+
+        -- Limitando o movimento apenas se a posição Y for maior que a metade da tela
+        if event.y > display.contentHeight / 2 then
+            nomade.y = event.y
+        else
+            nomade.y = display.contentHeight / 2
+        end
+
+        -- Limitando o movimento na borda inferior da tela
+        local limiteInferior = display.contentHeight - nomade.height / 2
+        if nomade.y > limiteInferior then
+            nomade.y = limiteInferior
+        end
 
         -- local newX = event.x
         -- local newY = event.y
@@ -59,10 +82,18 @@ end
 
 local function criarNomades()
     for i = 1, 1 do
-        local nomade = display.newImageRect("image/Page01/nomade.png", largura * 0.292, altura * 0.272) 
-        -- Definindo as coordenadas x e y dentro dos limites
+        local nomade = display.newImageRect("image/Page01/nomade.png", largura * 0.2, altura * 0.2) 
+        
+        -- Definindo as coordenadas x dentro dos limites
         nomade.x = math.random(50 + nomade.width / 2, largura - 50 - nomade.width / 2) -- Limites esquerdo e direito
-        nomade.y = math.random(300 + nomade.height / 2, altura - 50 - nomade.height / 2) -- Limites superior e inferior
+
+        local limiteSuperior = altura * 0.3 + nomade.height / 2
+        local limiteInferior = altura - 50 - nomade.height / 2
+
+        local limiteTopo = altura * 0.5 + nomade.height / 2
+        local limiteBase = altura - 50 - nomade.height / 2
+
+        nomade.y = math.random(limiteTopo, limiteBase)
         table.insert(nomades, nomade)
         nomade:addEventListener("touch", nomadeTouchHandler)
         exibirBalaoTexto()
@@ -71,10 +102,10 @@ end
 
 local function criarRecursos()
     local imagens = {
-        "image/Page01/mamute.png",
-        "image/Page01/bisao.png",
-        "image/Page01/antilope.png",
-        "image/Page01/coelho.png",
+        {path = "image/Page01/mamute.png", width = 200, height = 200},  -- mamute com tamanho 120x120
+        {path = "image/Page01/bisao.png", width = 150, height = 150},   -- bisão com tamanho 110x110
+        {path = "image/Page01/antilope.png", width = 110, height = 110},  -- antílope com tamanho 100x100
+        {path = "image/Page01/coelho.png", width = 50, height = 50},  -- coelho com tamanho 90x90
         "image/Page01/trigo.png",
         "image/Page01/cevada.png",
         "image/Page01/frutas_vermelhas.png",
@@ -99,52 +130,26 @@ local function criarRecursos()
             end
         until not muito_proximo
 
-        local imagemAleatoria = imagens[math.random(#imagens)]
-        local recurso = display.newImageRect(imagemAleatoria, 100, 100)
+        local largura_recurso
+        local altura_recurso
+        local imagemAleatoria
+
+        if i <= 4 then
+            imagemAleatoria = imagens[i].path
+            largura_recurso = imagens[i].width
+            altura_recurso = imagens[i].height
+        else
+            imagemAleatoria = imagens[math.random(5, #imagens)]
+            largura_recurso = 100
+            altura_recurso = 100
+        end
+
+        local recurso = display.newImageRect(imagemAleatoria, largura_recurso, altura_recurso)
         recurso.x = x
         recurso.y = y
         table.insert(recursos, recurso)
     end
 end
-
--- local function criarRecursos()
---     local imagens = {
---         "image/Page01/mamute.png",
---         "image/Page01/bisao.png",
---         "image/Page01/antilope.png",
---         "image/Page01/coelho.png",
---         "image/Page01/trigo.png",
---         "image/Page01/cevada.png",
---         "image/Page01/frutas_vermelhas.png",
---         "image/Page01/nozes.png"
---     }
-
---     for i = 1, num_recursos do
---         local x, y
---         local distancia_minima = largura * 0.13
-
---         repeat
---             x = math.random(50, largura - 50)
---             y = math.random(altura / 2 + altura * 0.195, altura - 50) -- Ajuste para gerar apenas na parte inferior
---             local muito_proximo = false
---             for j, nomade in ipairs(nomades) do
---                 local distancia_x = math.abs(nomade.x - x)
---                 local distancia_y = math.abs(nomade.y - y)
---                 if distancia_x < distancia_minima and distancia_y < distancia_minima then
---                     muito_proximo = true
---                     break
---                 end
---             end
---         until not muito_proximo
-
---         local imagemAleatoria = imagens[math.random(#imagens)]
---         local recurso = display.newImageRect(imagemAleatoria, 100, 100)
---         recurso.x = x
---         recurso.y = y
---         table.insert(recursos, recurso)
---     end
--- end
-
 
 local function colisaoComRecursos(nomade)
     local distancia_minima = tamanho_celula * 1.5
@@ -222,11 +227,11 @@ local function adicionarTextoBotaoAudio(sceneGroup)
     local textoBotaoAudio = display.newText({
         text = "Audio Ligar/Desligar",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     textoBotaoAudio.x = largura / 2
     textoBotaoAudio.y = altura - textoBotaoAudio.height / 2 - 10
-    textoBotaoAudio:setFillColor(1, 1, 1)
+    textoBotaoAudio:setFillColor(0.53, 0.81, 0.98)
     sceneGroup:insert(textoBotaoAudio)
 end
 
@@ -234,11 +239,11 @@ local function adicionarTextoBotaoProximaPagina(sceneGroup)
     local textoBotaoProximaPagina = display.newText({
         text = "Próxima Página",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
-    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 130
+    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 160
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
-    textoBotaoProximaPagina:setFillColor(1, 1, 1)
+    textoBotaoProximaPagina:setFillColor(0.53, 0.81, 0.98)
     sceneGroup:insert(textoBotaoProximaPagina)
 end
 
@@ -246,11 +251,11 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
     local textoBotaoPaginaAnterior = display.newText({
         text = "Página Anterior",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
-    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 540
+    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 510
     textoBotaoPaginaAnterior.y = altura - largura * 0.11 / 2 - 20
-    textoBotaoPaginaAnterior:setFillColor(1, 1, 1)
+    textoBotaoPaginaAnterior:setFillColor(0.53, 0.81, 0.98)
     sceneGroup:insert(textoBotaoPaginaAnterior)
 end
 
@@ -262,7 +267,7 @@ local function createTitulo(sceneGroup)
     })
     titulo.x = display.contentCenterX
     titulo.y = altura * 0.293 - 200
-    titulo:setFillColor(1, 1, 1)
+    titulo:setFillColor(0, 0, 0)
     sceneGroup:insert(titulo)
 end
 
@@ -301,7 +306,7 @@ local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font
             fontSize = fontSize,
             align = "justify"
         })
-        texto:setFillColor(1, 1, 1)
+        texto:setFillColor(0, 0, 0)
         sceneGroup:insert(texto)
     end
 end

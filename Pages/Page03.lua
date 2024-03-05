@@ -137,21 +137,6 @@ local function criarChao(sceneGroup)
     chao:addEventListener("collision", chaoCollision)
 end
 
-local function createTitulo(sceneGroup)
-  local titulo = display.newText({
-    text = "Multiplos toques",
-    font = native.newFont("Bold"),
-    fontSize = 60
-  })
-  -- Ajuste a posição do titulo para a parte superior da tela
-  titulo.x = display.contentCenterX
-  titulo.y = altura * 0.293 - 200
-  -- Define a cor do titulo
-  titulo:setFillColor(1, 1, 1)
-  -- Insere o titulo no grupo da cena
-  sceneGroup:insert(titulo)
-end
-
 -- Função para lidar com eventos de toque
 local function touchListener(event)
     local phase = event.phase
@@ -260,13 +245,13 @@ local function adicionarTextoBotaoAudio(sceneGroup)
     local textoBotaoAudio = display.newText({
         text = "Audio Ligar/Desligar",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
     textoBotaoAudio.x = largura / 2
     textoBotaoAudio.y = altura - textoBotaoAudio.height / 2 - 10
     -- Define a cor do titulo
-    textoBotaoAudio:setFillColor(1, 1, 1)
+    textoBotaoAudio:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoAudio)
 end
@@ -275,13 +260,13 @@ local function adicionarTextoBotaoProximaPagina(sceneGroup)
     local textoBotaoProximaPagina = display.newText({
         text = "Próxima Página",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 130
+    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 150
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoProximaPagina:setFillColor(1, 1, 1)
+    textoBotaoProximaPagina:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoProximaPagina)
 end
@@ -290,13 +275,13 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
     local textoBotaoPaginaAnterior = display.newText({
         text = "Página Anterior",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 540
+    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 520
     textoBotaoPaginaAnterior.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoPaginaAnterior:setFillColor(1, 1, 1)
+    textoBotaoPaginaAnterior:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoPaginaAnterior)
 end
@@ -309,7 +294,7 @@ local function createTitulo(sceneGroup)
     })
     titulo.x = largura * 0.5
     titulo.y = altura * 0.07
-    titulo:setFillColor(1, 1, 1)
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
@@ -348,14 +333,14 @@ local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font
             fontSize = fontSize,
             align = "justify"
         })
-        texto:setFillColor(1, 1, 1)
+        texto:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
         sceneGroup:insert(texto)
     end
 end
 
 -- Função para criar o texto
 local function createTexto(sceneGroup)
-    texto = "as plantas começaram a ser cultivadas muito próximas uma das outras. Isso porque elas podiam produzir frutos, que eram facilmente colhidos quando madurassem, o que permitia uma maior produtividade das plantas cultivadas em relação ao seu habitat natural."
+    texto = "As plantas começaram a ser cultivadas muito próximas uma das outras. Isso porque elas podiam produzir frutos, que eram facilmente colhidos quando madurassem, o que permitia uma maior produtividade das plantas cultivadas em relação ao seu habitat natural."
     criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 150, largura - 60, 100, native.newFont("Bold"), 35, 40)
 end
 

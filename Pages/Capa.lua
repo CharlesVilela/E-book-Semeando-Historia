@@ -14,7 +14,7 @@ local function createTitulo(sceneGroup)
     })
     titulo.x = largura * 0.5
     titulo.y = altura * 0.16
-    titulo:setFillColor(1, 1, 1)
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
@@ -26,7 +26,7 @@ local function createSubTitulo(sceneGroup)
     })
     subtitulo.x = largura * 0.5
     subtitulo.y = altura * 0.85
-    subtitulo:setFillColor(1, 1, 1)
+    subtitulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(subtitulo)
 end
 
@@ -61,13 +61,13 @@ local function adicionarTextoBotaoAudio(sceneGroup)
     local textoBotaoAudio = display.newText({
         text = "Audio Ligar/Desligar",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
     textoBotaoAudio.x = largura / 2
     textoBotaoAudio.y = altura - textoBotaoAudio.height / 2 - 10
     -- Define a cor do titulo
-    textoBotaoAudio:setFillColor(1, 1, 1)
+    textoBotaoAudio:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoAudio)
 end
@@ -76,13 +76,13 @@ local function adicionarTextoBotaoProximaPagina(sceneGroup)
     local textoBotaoProximaPagina = display.newText({
         text = "Próxima Página",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 130
+    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 150
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoProximaPagina:setFillColor(1, 1, 1)
+    textoBotaoProximaPagina:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoProximaPagina)
 end
@@ -97,7 +97,7 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
     textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 540
     textoBotaoPaginaAnterior.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoPaginaAnterior:setFillColor(1, 1, 1)
+    textoBotaoPaginaAnterior:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoPaginaAnterior)
 end

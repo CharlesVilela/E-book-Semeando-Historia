@@ -228,8 +228,8 @@ local function moverBoi(event)
         boi:setLinearVelocity(-velocidade, 0) -- Altere as coordenadas de velocidade conforme necessário
     elseif boi.isMovingRight then
         boi:setLinearVelocity(velocidade, 0) -- Define a velocidade como zero quando não estiver tocando no boi
-    -- else
-    --     boi:setLinearVelocity(0, 0)
+    else
+        boi:setLinearVelocity(0, 0)
     end
 end
 
@@ -352,7 +352,7 @@ local function createTitulo(sceneGroup)
     })
     titulo.x = largura * 0.5
     titulo.y = altura * 0.07
-    titulo:setFillColor(1, 1, 1)
+    titulo:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
     sceneGroup:insert(titulo)
 end
 
@@ -391,14 +391,14 @@ local function criarTextoJustificado(sceneGroup, text, x, y, width, height, font
             fontSize = fontSize,
             align = "justify"
         })
-        texto:setFillColor(1, 1, 1)
+        texto:setFillColor(0.2 * (52/255), 0.2 * (131/255), 0.2 * (235/255))
         sceneGroup:insert(texto)
     end
 end
 
 -- Função para criar o texto
 local function createTexto(sceneGroup)
-    texto = "Durante a revolução agrícola, o desenvolvimento de ferramentas específicas foi crucial para avanços na agricultura. No sistema de Cultivo Temporário de Derrubada e Queimada, machados, foices e ferramentas para queima controlada preparavam a terra. No sistema de Alqueive e Tração Leve, arados leves e instrumentos de aração facilitavam o plantio intensivo. Em sistemas de Alqueive e Tração Pesada, arados pesados e instrumentos de tração animal robustos lidavam com áreas maiores e solos difíceis. Essas ferramentas otimizaram processos agrícolas e aumentaram a produtividade."
+    texto = "Durante a revolução agrícola, o desenvolvimento de ferramentas específicas foi crucial para avanços na agricultura. No sistema de Alqueive e Tração Leve, arados leves e instrumentos de aração revolucionaram o processo de plantio, permitindo uma agricultura mais intensiva e eficiente. Essas ferramentas foram projetadas para facilitar a preparação do solo, promovendo uma distribuição uniforme de sementes e aumentando a produtividade. O sistema de alqueive e tração leve representou um marco na história agrícola, marcando uma transição significativa em direção a métodos mais eficazes de cultivo."
     criarTextoJustificado(sceneGroup, texto, display.contentCenterX, 130, largura - 60, 100, native.newFont("Bold"), 30, 35)
 end
 
@@ -406,13 +406,13 @@ local function adicionarTextoBotaoAudio(sceneGroup)
     local textoBotaoAudio = display.newText({
         text = "Audio Ligar/Desligar",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
     textoBotaoAudio.x = largura / 2
     textoBotaoAudio.y = altura - textoBotaoAudio.height / 2 - 10
     -- Define a cor do titulo
-    textoBotaoAudio:setFillColor(1, 1, 1)
+    textoBotaoAudio:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoAudio)
 end
@@ -421,13 +421,13 @@ local function adicionarTextoBotaoProximaPagina(sceneGroup)
     local textoBotaoProximaPagina = display.newText({
         text = "Próxima Página",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 130
+    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 150
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoProximaPagina:setFillColor(1, 1, 1)
+    textoBotaoProximaPagina:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoProximaPagina)
 end
@@ -436,13 +436,13 @@ local function adicionarTextoBotaoPaginaAnterior(sceneGroup)
     local textoBotaoPaginaAnterior = display.newText({
         text = "Página Anterior",
         font = native.newFont("Bold"),
-        fontSize = 20
+        fontSize = 25
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 540
+    textoBotaoPaginaAnterior.x = largura - largura * 0.11 / 2 - 520
     textoBotaoPaginaAnterior.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoPaginaAnterior:setFillColor(1, 1, 1)
+    textoBotaoPaginaAnterior:setFillColor(0.53, 0.81, 0.98)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoPaginaAnterior)
 end
@@ -461,7 +461,7 @@ function scene:create( event )
     createTexto(sceneGroup)
 
     physics.start()
-    physics.setGravity(0, 9.8)
+    physics.setGravity(0, 0)
 
     imagem_boi = "image/Page04/boi_direita.png"
 
