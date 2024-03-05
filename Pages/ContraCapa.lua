@@ -24,7 +24,7 @@ local function onTouch(event)
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
             buttonPlay = display.newImageRect(scene.view, "image/Fone/audio.png", buttonSize, buttonSize)
-            sound = audio.loadSound("audio/Page01/audioPage01.mp3")
+            sound = audio.loadSound("audio/ContraCapa/audioContraCapa.mp3")
             audio.play(sound, {loops = -1})
         end
         buttonPlay.x = largura / 2
@@ -33,28 +33,64 @@ local function onTouch(event)
     end
 end
 
-local function createTitulo(sceneGroup)
+local function createAutor(sceneGroup)
     local titulo = display.newText({
-        text = "Contra Capa",
+        text = "Autor: Charles Vilela de Souza \n E-mail: charles.vilela@upe.br",
         font = native.newFont("Bold"),
-        fontSize = largura * 0.1  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
+        fontSize = 40  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.3
+    titulo.y = altura * 0.44
     titulo:setFillColor(1, 1, 1)
     sceneGroup:insert(titulo)
 end
 
-local function createSubTitulo(sceneGroup)
-    local subtitulo = display.newText({
-        text = "Autor: Charles Vilela de Souza \n Ano: 2024",
+local function createAno(sceneGroup)
+    local titulo = display.newText({
+        text = "Ano: 2024",
         font = native.newFont("Bold"),
-        fontSize = largura * 0.05  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
+        fontSize = 40
     })
-    subtitulo.x = largura * 0.5
-    subtitulo.y = altura * 0.45
-    subtitulo:setFillColor(1, 1, 1)
-    sceneGroup:insert(subtitulo)
+    titulo.x = largura * 0.5
+    titulo.y = altura * 0.35
+    titulo:setFillColor(1, 1, 1)
+    sceneGroup:insert(titulo)
+end
+
+local function createOrientador(sceneGroup)
+    local titulo = display.newText({
+        text = "Orientador: Ewerton Mendonça",
+        font = native.newFont("Bold"),
+        fontSize = 40
+    })
+    titulo.x = largura * 0.5
+    titulo.y = altura * 0.54
+    titulo:setFillColor(1, 1, 1)
+    sceneGroup:insert(titulo)
+end
+
+local function createDisciplina(sceneGroup)
+    local titulo = display.newText({
+        text = "Disciplina: Computação Gráfica \n e Sistemas Multimidia",
+        font = native.newFont("Bold"),
+        fontSize = 40  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
+    })
+    titulo.x = largura * 0.5
+    titulo.y = altura * 0.25
+    titulo:setFillColor(1, 1, 1)
+    sceneGroup:insert(titulo)
+end
+
+local function createTitulo(sceneGroup)
+    local titulo = display.newText({
+        text = "Semeando Historia",
+        font = native.newFont("Bold"),
+        fontSize = 60  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
+    })
+    titulo.x = largura * 0.5
+    titulo.y = altura * 0.1
+    titulo:setFillColor(1, 1, 1)
+    sceneGroup:insert(titulo)
 end
 
 local function adicionarTextoBotaoAudio(sceneGroup)
@@ -74,15 +110,15 @@ end
 
 local function adicionarTextoBotaoProximaPagina(sceneGroup)
     local textoBotaoProximaPagina = display.newText({
-        text = "Próxima Página",
+        text = "VOLTAR PARA O INICIO",
         font = native.newFont("Bold"),
         fontSize = 20
     })
     -- Ajuste a posição do titulo para a parte superior da tela
-    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 130
+    textoBotaoProximaPagina.x = largura - largura * 0.11 / 2 - 170
     textoBotaoProximaPagina.y = altura - largura * 0.11 / 2 - 20
     -- Define a cor do titulo
-    textoBotaoProximaPagina:setFillColor(1, 1, 1)
+    textoBotaoProximaPagina:setFillColor(1, 0.7, 0)
     -- Insere o titulo no grupo da cena
     sceneGroup:insert(textoBotaoProximaPagina)
 end
@@ -112,7 +148,10 @@ function scene:create( event )
     ceu:setFillColor(0.53, 0.81, 0.98) -- Cor azul do céu
 
     createTitulo(sceneGroup)
-    -- createSubTitulo(sceneGroup)
+    createDisciplina(sceneGroup)
+    createAno(sceneGroup)
+    createAutor(sceneGroup)
+    createOrientador(sceneGroup)
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09

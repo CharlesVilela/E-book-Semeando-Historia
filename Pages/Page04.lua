@@ -228,8 +228,8 @@ local function moverBoi(event)
         boi:setLinearVelocity(-velocidade, 0) -- Altere as coordenadas de velocidade conforme necessário
     elseif boi.isMovingRight then
         boi:setLinearVelocity(velocidade, 0) -- Define a velocidade como zero quando não estiver tocando no boi
-    else
-        boi:setLinearVelocity(0, 0)
+    -- else
+    --     boi:setLinearVelocity(0, 0)
     end
 end
 

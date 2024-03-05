@@ -13,7 +13,7 @@ local function createTitulo(sceneGroup)
         fontSize = largura * 0.1  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     titulo.x = largura * 0.5
-    titulo.y = altura * 0.3
+    titulo.y = altura * 0.16
     titulo:setFillColor(1, 1, 1)
     sceneGroup:insert(titulo)
 end
@@ -25,7 +25,7 @@ local function createSubTitulo(sceneGroup)
         fontSize = largura * 0.05  -- Usar uma porcentagem da largura da tela para o tamanho da fonte
     })
     subtitulo.x = largura * 0.5
-    subtitulo.y = altura * 0.45
+    subtitulo.y = altura * 0.85
     subtitulo:setFillColor(1, 1, 1)
     sceneGroup:insert(subtitulo)
 end
@@ -48,7 +48,7 @@ local function onTouch(event)
             isAudioPlaying = true
             buttonPlay:removeSelf()  -- Remove o botão atual
             buttonPlay = display.newImageRect(scene.view, "image/Fone/audio.png", buttonSize, buttonSize)
-            sound = audio.loadSound("audio/Page01/audioPage01.mp3")
+            sound = audio.loadSound("audio/Capa/audioCapa.mp3")
             audio.play(sound, {loops = -1})
         end
         buttonPlay.x = largura / 2
@@ -106,11 +106,18 @@ end
 -- create()
 function scene:create( event )
     local sceneGroup = self.view
-    -- Adicionar um retângulo azul para simular o céu
-    local ceu = display.newRect(sceneGroup, 0, 0, largura, altura)
+
+    local ceu = display.newRect(sceneGroup, 0, 0, largura, altura / 2 * 2)
     ceu.anchorX = 0
     ceu.anchorY = 0
-    ceu:setFillColor(0.53, 0.81, 0.98) -- Cor azul do céu
+    ceu:setFillColor(0.53, 0.81, 0.98)
+
+    -- Adicionar a imagem de fundo na parte inferior da tela
+    local background = display.newImageRect(sceneGroup, "image/Capa/capa.png", largura, altura * 0.586)
+    background.anchorX = 0
+    background.anchorY = 1
+    background.x = 0
+    background.y = altura - 200
 
     createTitulo(sceneGroup)
     createSubTitulo(sceneGroup)

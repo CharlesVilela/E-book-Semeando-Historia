@@ -201,7 +201,7 @@ end
 -- Runtime:addEventListener("touch", toqueListener)
 Runtime:addEventListener("enterFrame", gameLoop)
 
-function createTitulo(sceneGroup)
+local function createTitulo(sceneGroup)
 
     local titulo = display.newText({
         text = "Antes da agricultura",
