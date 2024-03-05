@@ -32,6 +32,31 @@ local limiteInferior = altura - 300  -- Ajuste conforme necessário
 local mySceneGroup
 local nomade
 
+local balaoTexto
+local mySceneGroup
+
+local function exibirBalaoTexto()
+    -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+    -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+    balaoTexto = display.newText({
+        text = "Toque nas duas extremidades \n ao mesmo tempo para \n movimentar a ferramenta \n e cavar o buracos",
+        x = 400, 
+        y= altura - 450,
+        font = native.systemFont,
+        fontSize = 30
+    })
+    balaoTexto:setFillColor(1, 0, 0)
+    mySceneGroup:insert(balaoTexto)
+end
+
+local function esconderBalao()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTexto then
+        balaoTexto:removeSelf()
+        balaoTexto = nil
+    end
+end
 
 local function criarNomade(sceneGroup)
     nomade = display.newImageRect("image/Page01/nomade.png", largura * 0.4, altura * 0.4)
@@ -136,6 +161,7 @@ local function touchListener(event)
         -- Adicionar o objeto à tabela de objetos tocados
         touchedObjects[target] = true
 
+        esconderBalao()
         local count = 0
         for _ in pairs(touchedObjects) do
             count = count + 1
@@ -352,11 +378,12 @@ function scene:create(event)
 
   -- Criar dois objetos de exibição na tela e adicioná-los ao grupo
   local newRect1 = display.newRect(group, display.contentCenterX - 200, 600, 30, 100)
-  newRect1:setFillColor(1, 0, 0.3)
+  newRect1:setFillColor(0.4, 0.2, 0)
   physics.addBody(newRect1, "dynamic", { density = 1.0, friction = 0.3, bounce = 0.2 })
-  
+  exibirBalaoTexto()
+
   local newRect2 = display.newRect(group, display.contentCenterX - 200, 700, 30, 100)
-  newRect2:setFillColor(0.3, 0, 1)
+  newRect2:setFillColor(0.4, 0.2, 0)
   physics.addBody(newRect2, "dynamic", { density = 1.0, friction = 0.3, bounce = 0.2 })
 
   -- Criar uma junta entre os objetos

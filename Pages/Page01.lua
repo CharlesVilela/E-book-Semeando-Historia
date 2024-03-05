@@ -8,26 +8,64 @@ local recursos = {}
 local num_recursos = 5
 local recursos_coletados = 0
 local busca_iniciada = false
+local balaoTexto
+local mySceneGroup
+
+local function exibirBalaoTexto()
+    -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+    -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+    balaoTexto = display.newText({
+        text = "Toque no nomade e arraste. \n Para coletar os recursos",
+        x = 300, 
+        y= altura - 500,
+        font = native.systemFont,
+        fontSize = 30
+    })
+    balaoTexto:setFillColor(1, 0, 0)
+    mySceneGroup:insert(balaoTexto)
+end
+
+local function esconderBalao()
+    print("Chamou remover Balao")
+    -- Remover o balão da cena
+    if balaoTexto then
+        balaoTexto:removeSelf()
+        balaoTexto = nil
+    end
+end
 
 local function nomadeTouchHandler(event)
     local nomade = event.target
     if event.phase == "began" then
         busca_iniciada = true
+        esconderBalao()
     end
     -- Adicionei a lógica de movimento aqui
     if busca_iniciada then
         nomade.x = event.x
         nomade.y = event.y
+
+        -- local newX = event.x
+        -- local newY = event.y
+        -- newX = math.max(newX, 10 + nomade.width / 2) -- Limite esquerdo
+        -- newX = math.min(newX, largura - 10 - nomade.width / 2) -- Limite direito
+        -- newY = math.max(newY, 400 + nomade.height / 2) -- Limite superior
+        -- newY = math.min(newY, altura - 100 - nomade.height / 2) -- Limite inferior
+        -- nomade.x = newX
+        -- nomade.y = newY
+        
     end
 end
 
 local function criarNomades()
     for i = 1, 1 do
         local nomade = display.newImageRect("image/Page01/nomade.png", largura * 0.292, altura * 0.272) 
-        nomade.x = math.random(tamanho_celula, largura - tamanho_celula)
-        nomade.y = altura - altura * 0.136
+        -- Definindo as coordenadas x e y dentro dos limites
+        nomade.x = math.random(50 + nomade.width / 2, largura - 50 - nomade.width / 2) -- Limites esquerdo e direito
+        nomade.y = math.random(300 + nomade.height / 2, altura - 50 - nomade.height / 2) -- Limites superior e inferior
         table.insert(nomades, nomade)
         nomade:addEventListener("touch", nomadeTouchHandler)
+        exibirBalaoTexto()
     end
 end
 
@@ -68,6 +106,45 @@ local function criarRecursos()
         table.insert(recursos, recurso)
     end
 end
+
+-- local function criarRecursos()
+--     local imagens = {
+--         "image/Page01/mamute.png",
+--         "image/Page01/bisao.png",
+--         "image/Page01/antilope.png",
+--         "image/Page01/coelho.png",
+--         "image/Page01/trigo.png",
+--         "image/Page01/cevada.png",
+--         "image/Page01/frutas_vermelhas.png",
+--         "image/Page01/nozes.png"
+--     }
+
+--     for i = 1, num_recursos do
+--         local x, y
+--         local distancia_minima = largura * 0.13
+
+--         repeat
+--             x = math.random(50, largura - 50)
+--             y = math.random(altura / 2 + altura * 0.195, altura - 50) -- Ajuste para gerar apenas na parte inferior
+--             local muito_proximo = false
+--             for j, nomade in ipairs(nomades) do
+--                 local distancia_x = math.abs(nomade.x - x)
+--                 local distancia_y = math.abs(nomade.y - y)
+--                 if distancia_x < distancia_minima and distancia_y < distancia_minima then
+--                     muito_proximo = true
+--                     break
+--                 end
+--             end
+--         until not muito_proximo
+
+--         local imagemAleatoria = imagens[math.random(#imagens)]
+--         local recurso = display.newImageRect(imagemAleatoria, 100, 100)
+--         recurso.x = x
+--         recurso.y = y
+--         table.insert(recursos, recurso)
+--     end
+-- end
+
 
 local function colisaoComRecursos(nomade)
     local distancia_minima = tamanho_celula * 1.5
@@ -237,7 +314,7 @@ end
 
 function scene:create(event)
     local sceneGroup = self.view
-
+    mySceneGroup = sceneGroup
     local ceu = display.newRect(sceneGroup, 0, 0, largura, altura / 2 * 1.5)
     ceu.anchorX = 0
     ceu.anchorY = 0

@@ -19,6 +19,57 @@ local isCriadoObjetoNovo = false
 local trigo
 local balaoTexto
 
+-- local balaoTextoEnxofre
+-- local balaoTextoTocha
+-- local mySceneGroup
+
+-- local function exibirBalaoTextoEnxofre()
+--     -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+--     -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+--     balaoTexto = display.newText({
+--         text = "Enxofre",
+--         x = 400, 
+--         y= altura * 0.55,
+--         font = native.systemFont,
+--         fontSize = 30
+--     })
+--     balaoTexto:setFillColor(1, 0, 0)
+--     mySceneGroup:insert(balaoTexto)
+-- end
+
+-- local function esconderBalaoEnxofre()
+--     print("Chamou remover Balao")
+--     -- Remover o balão da cena
+--     if balaoTextoEnxofre then
+--         balaoTextoEnxofre:removeSelf()
+--         balaoTextoEnxofre = nil
+--     end
+-- end
+
+-- local function exibirBalaoTextoTocha()
+--     -- local balao = display.newCircle(arado_leve.x, arado_leve.y - arado_leve.height * 0.4, 50)
+--     -- balao:setFillColor(1, 1, 0)  -- Cor amarela para o balão
+--     balaoTextoTocha = display.newText({
+--         text = "Tocha",
+--         x = 600, 
+--         y= altura * 0.55,
+--         font = native.systemFont,
+--         fontSize = 30
+--     })
+--     balaoTextoTocha:setFillColor(1, 0, 0)
+--     mySceneGroup:insert(balaoTextoTocha)
+-- end
+
+-- local function esconderBalaoTocha()
+--     print("Chamou remover Balao")
+--     -- Remover o balão da cena
+--     if balaoTextoTocha then
+--         balaoTextoTocha:removeSelf()
+--         balaoTextoTocha = nil
+--     end
+-- end
+
+
 local function criarCafanhotos()
     if not trigoDevorado and gerarGafanhotos then
         local cafanhoto = display.newImageRect("image/Page05/gafanhoto.png", 50, 50)
@@ -373,7 +424,7 @@ end
 
 function scene:create(event)
     local sceneGroup = self.view
-
+    mySceneGroup = sceneGroup
     -- ADICIONAR O CEU NA TELA
     local ceu = display.newRect(sceneGroup, 0, 0, largura, altura)
     ceu.anchorX = 0
@@ -437,7 +488,6 @@ function scene:create(event)
     objeto3.x = 600
     objeto3.y = halfScreenHeight * 1.2
     objeto3:addEventListener("touch", function(event) toque(event, sceneGroup, objeto1) end)
-
 
     -- ADICIONANDO O BOTÃO DE AUDIO
     local buttonSize = largura * 0.09
